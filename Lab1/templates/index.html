@@ -1,0 +1,14 @@
+<html>
+    <aside>
+        <input type="text" value="Введите название княжества Древних Руссов">
+        {{ range .services }}
+            <div>
+                <h1>{{ .Name }}</h1>
+                {{ if .PhotoPath}}
+                    <img scr={{.PhotoPath}}>
+                {{ end }}
+                <button data-name={{ .Name }}>Подробнее</button>
+            </div>
+        {{ end }}
+    </aside>
+</html>
