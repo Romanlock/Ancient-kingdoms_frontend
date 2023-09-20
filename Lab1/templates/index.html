@@ -1,14 +1,31 @@
-<html>
-    <aside>
-        <input type="text" value="Введите название княжества Древних Руссов">
-        {{ range .services }}
-            <div>
-                <h1>{{ .Name }}</h1>
-                {{ if .PhotoPath}}
-                    <img scr={{.PhotoPath}}>
-                {{ end }}
-                <button data-name={{ .Name }}>Подробнее</button>
-            </div>
-        {{ end }}
-    </aside>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Топ Древнерусских княжеств</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header style="text-align: center; font-size: 40px; margin-bottom: 30px; font-family: Arial, Helvetica, sans-serif;">
+        Топ 6 княжеств Древних Руссов
+    </header>
+    <div id="root" style="display: block;">
+        <div style="text-align: center;">
+            <form method="GET" name="search" style="text-align: center;">
+                <label for="kingdom_name" style="font-size: 30px;">Введите название:</label>
+                <input type="text" id="kingdom_name" name="kingdom_name" style="font-size: 30px;">
+                <input type="submit" class="button" value="Поиск" style="cursor: pointer !important; font-size: 30px;">
+            </form>
+        </div>
+        <div class="services-main" style="display: flex; flex-wrap: wrap;">
+            {{ range .services }}
+                <div style="margin: 10px 10px 10px 10px; border: 2px solid black;">
+                    <h1>{{ .Name }}</h1>
+                    <img src="{{ .PhotoPath }}" style="width: 300px; height: 300px; object-fit: fill; text-align: center;"><br>
+                    <a class="button" data-name="{{ .Name }}" href="{{ .Name }}" style="font-size: 30px;">Подробнее</a>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+</body>
 </html>
