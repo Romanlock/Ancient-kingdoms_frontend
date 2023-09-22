@@ -1,73 +1,59 @@
-package api
+package app
 
 import (
 	"log"
 	"net/http"
-	"strings"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
-type Service struct {
-	Name        string
-	Description string
-	PhotoPath   string
-}
+func (a *Application) StartServer() {
+	log.Println("Server start up")
 
-var services = []Service{
-	{"Владимиро-Суздальское", "", "../image/VS.png"},
-	{"Галицко-Волынское", "Галицко-Волынское княжество считалось основным опорным центром базы Древних Руссов", "../image/GV.jpeg"},
-	{"Киевское", "", "../image/K.svg"},
-	{"Переяславское", "", "../image/P.png"},
-	{"Полоцкое", "", "../image/Po.png"},
-	{"Черниговское", "", "../image/C.png"},
-}
+	r := gin.Default()
 
-func StartServer() {
-	log.Println("Server started")
+	r.GET("/ping", func(c *gin.Context) {
+		id := c.Query("id") // получаем из запроса query string
 
-	app := gin.Default()
+		if id != "" {
+			log.Printf("id recived %s\n", id)
+			intID, err := strconv.Atoi(id) // пытаемся привести это к чиселке
+			if err != nil {                // если не получилось
+				log.Printf("cant convert id %v", err)
+				c.Error(err)
+				return
+			}
 
-	app.LoadHTMLGlob("../../templates/*.html")
-	app.Static("/image", "../../resources/image")
-	app.Static("/css", "../../templates/css/")
+			product, err := a.repo.GetProductByID(uint(intID))
+			if err != nil { // если не получилось
+				log.Printf("cant get product by id %v", err)
+				c.Error(err)
+				return
+			}
 
-	app.GET("/", func(c *gin.Context) {
-		title := strings.ToLower(c.Query("kingdom_name"))
-
-		if title == "" {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"services": services,
+			c.JSON(http.StatusOK, gin.H{
+				"product_price": product.Price,
 			})
 			return
 		}
-
-		sortedServices := []Service{}
-		for i := range services {
-			if strings.Contains(strings.ToLower(services[i].Name), title) {
-				sortedServices = append(sortedServices, services[i])
-			}
-		}
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"services": sortedServices,
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
 		})
 	})
 
-	app.GET("/:kingdom", func(c *gin.Context) {
-		title := c.Param("kingdom")
-		for _, service := range services {
-			if service.Name == title {
-				c.HTML(http.StatusOK, "kingdom.html", gin.H{
-					"Name":      		service.Name,
-					"PhotoPath":      	"../" + service.PhotoPath,
-					"Description":      service.Description,
-				})
-				return
-			}
-		}
+	r.LoadHTMLGlob("templates/*")
+
+	r.GET("/test", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "test.tmpl", gin.H{
+			"title": "Main website",
+			"test":  []string{"a", "b"},
+		})
 	})
 
-	app.Run(":8000")
+	r.Static("/image", "./resources")
+
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 	log.Println("Server down")
 }

@@ -19,10 +19,18 @@
         </div>
         <div class="services-main" style="display: flex; flex-wrap: wrap;">
             {{ range .services }}
-                <div style="margin: 10px 10px 10px 10px; border: 2px solid black;">
-                    <h1>{{ .Name }}</h1>
-                    <img src="{{ .PhotoPath }}" style="width: 300px; height: 300px; object-fit: fill; text-align: center;"><br>
-                    <a class="button" data-name="{{ .Name }}" href="{{ .Name }}" style="font-size: 30px;">Подробнее</a>
+                <div style="margin: 10px 10px 10px 10px; border: 2px solid black; border-radius: 2%;">
+                    <div style="text-align: center;">
+                        <h1>{{ .Name }}</h1>
+                    </div>
+                    <img src="{{ .PhotoPath }}" style="width: 360px; height: 360px; object-fit: fill; text-align: center;"><br>
+                    <div style="text-align: right;">
+                        <a class="button" data-name="{{ .Name }}" href="{{ .Name }}" style="font-size: 25px; width: 249px; 
+                        padding: 0px 10px 0px 10px; height: 64px;flex-shrink: 0;border-radius: 20px;background: #358CDC;
+                        color: black; text-decoration: none;">
+                            Подробнее
+                        </a>
+                    </div>
                 </div>
             {{ end }}
         </div>
