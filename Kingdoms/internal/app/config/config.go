@@ -9,20 +9,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config Структура конфигурации;
-// Содержит все конфигурационные данные о сервисе;
-// автоподгружается при изменении исходного файла
 type Config struct {
 	ServiceHost string
 	ServicePort int
 }
 
-// NewConfig Создаёт новый объект конфигурации, загружая данные из файла конфигурации
 func NewConfig(ctx context.Context) (*Config, error) {
 	var err error
 
 	configName := "config"
 	_ = godotenv.Load()
+
 	if os.Getenv("CONFIG_NAME") != "" {
 		configName = os.Getenv("CONFIG_NAME")
 	}
@@ -47,4 +44,5 @@ func NewConfig(ctx context.Context) (*Config, error) {
 	log.Info("config parsed")
 
 	return cfg, nil
+
 }
