@@ -37,7 +37,8 @@ func StartServer() {
 
 		if title == "" {
 			c.HTML(http.StatusOK, "index.html", gin.H{
-				"services": services,
+				"services":  services,
+				"QueryName": title,
 			})
 			return
 		}
@@ -50,7 +51,8 @@ func StartServer() {
 		}
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"services": sortedServices,
+			"services":  sortedServices,
+			"QueryName": title,
 		})
 	})
 

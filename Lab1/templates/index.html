@@ -13,7 +13,7 @@
         <div style="text-align: center;">
             <form method="GET" name="search" style="text-align: center;">
                 <label for="kingdom_name" style="font-size: 30px;">Введите название:</label>
-                <input type="text" id="kingdom_name" name="kingdom_name" style="font-size: 30px;">
+                <input type="text" id="kingdom_name" name="kingdom_name" value="{{ .QueryName }}" style="font-size: 30px;">
                 <input type="submit" class="button" value="Поиск" style="cursor: pointer !important; font-size: 30px;">
             </form>
         </div>
