@@ -10,8 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// TODO
-
 func main() {
 	_ = godotenv.Load()
 	db, err := gorm.Open(postgres.Open(dsn.FromEnv()), &gorm.Config{})

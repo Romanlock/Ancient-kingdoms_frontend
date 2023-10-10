@@ -1,7 +1,5 @@
 package app
 
-// TODO
-
 import (
 	"log"
 	"net/http"
@@ -34,79 +32,78 @@ func (a *Application) StartServer() {
 	a.r = gin.Default()
 
 	a.r.LoadHTMLGlob("../../templates/*.html")
-	a.r.Static("/css", "../../templates/css")
+	// a.r.Static("/css", "../../templates/css")
+	a.r.Static("/js", "../../templates/js")
 
-	a.r.GET("/", a.loadHome)
-	a.r.GET("/:region_name", a.loadPage)
-	a.r.POST("/delete_region/:region_name", func(c *gin.Context) {
-		region_name := c.Param("region_name")
-		err := a.repo.LogicalDeleteRegion(region_name)
-
-		if err != nil {
-			c.Error(err)
-			return
-		}
-
-		c.Redirect(http.StatusFound, "/")
-	})
+	a.r.GET("/", a.loadKingdoms)
+	a.r.GET("/:kingdom_name", a.loadKingdom)
+	a.r.POST("/delete_kingdom/:kingdom_name", a.loadKingdomChangeVisibility)
 
 	a.r.Run(":8000")
 
 	log.Println("Server is down")
 }
 
-func (a *Application) loadHome(c *gin.Context) {
-	region_name := c.Query("region_name")
+func (a *Application) loadKingdoms(c *gin.Context) {
+	kingdomName := c.Query("kingdom_name")
 
-	if region_name == "" {
-
-		all_regions, err := a.repo.GetAllRegions()
+	if kingdomName == "" {
+		allKingdoms, err := a.repo.GetAllKingdoms()
 
 		if err != nil {
+			log.Println(err)
 			c.Error(err)
 		}
 
-		c.HTML(http.StatusOK, "regions.html", gin.H{
-			"regions": a.repo.FilterActiveRegions(all_regions),
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"kingdoms": allKingdoms,
 		})
 	} else {
-		found_regions, err := a.repo.SearchRegions(region_name)
+		foundKingdoms, err := a.repo.SearchKingdoms(kingdomName)
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		c.HTML(http.StatusOK, "regions.html", gin.H{
-			"regions": a.repo.FilterActiveRegions(found_regions),
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"kingdoms":   foundKingdoms,
+			"searchText": kingdomName,
 		})
 	}
 }
 
-func (a *Application) loadPage(c *gin.Context) {
-	region_name := c.Param("region_name")
+func (a *Application) loadKingdom(c *gin.Context) {
+	kingdomName := c.Param("kingdom_name")
 
-	if region_name == "favicon.ico" {
+	if kingdomName == "favicon.ico" {
 		return
 	}
 
-	region, err := a.repo.GetRegionByName(region_name)
+	kingdom, err := a.repo.GetKingdomByName(kingdomName)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	c.HTML(http.StatusOK, "region.html", gin.H{
-		"Name":           region.Name,
-		"Image":          region.Image,
-		"AreaKm":         region.AreaKm,
-		"Population":     region.Population,
-		"Details":        region.Details,
-		"HeadName":       region.HeadName,
-		"HeadEmail":      region.HeadEmail,
-		"HeadPhone":      region.HeadPhone,
-		"AverageHeightM": region.AverageHeightM,
+	c.HTML(http.StatusOK, "kingdom.html", gin.H{
+		"Name":        kingdom.Name,
+		"Image":       kingdom.Image,
+		"Description": kingdom.Description,
+		"Capital":     kingdom.Capital,
+		"Area":        kingdom.Area,
+		"State":       kingdom.State,
 	})
+}
 
+func (a *Application) loadKingdomChangeVisibility(c *gin.Context) {
+	kingdomName := c.Param("kingdom_name")
+	err := a.repo.ChangeKingdomVisibility(kingdomName)
+
+	if err != nil {
+		c.Error(err)
+	}
+
+	c.Redirect(http.StatusFound, "/"+kingdomName)
 }
