@@ -32,7 +32,7 @@ func (a *Application) StartServer() {
 	a.r = gin.Default()
 
 	a.r.LoadHTMLGlob("../../templates/*.html")
-	// a.r.Static("/css", "../../templates/css")
+	a.r.Static("/css", "../../templates/css")
 	a.r.Static("/js", "../../templates/js")
 
 	a.r.GET("/", a.loadKingdoms)
