@@ -32,7 +32,7 @@ func MigrateSchema(db *gorm.DB) error {
 		return err
 	}
 
-	err = MigrateDielty(db)
+	err = MigrateUser(db)
 	if err != nil {
 		return err
 	}
@@ -43,11 +43,6 @@ func MigrateSchema(db *gorm.DB) error {
 	}
 
 	err = MigrateRuling(db)
-	if err != nil {
-		return err
-	}
-
-	err = MigrateCampaign(db)
 	if err != nil {
 		return err
 	}
@@ -65,10 +60,10 @@ func MigrateKingdom(db *gorm.DB) error {
 	return nil
 }
 
-func MigrateDielty(db *gorm.DB) error {
-	err := db.AutoMigrate(&ds.Dielty{})
+func MigrateUser(db *gorm.DB) error {
+	err := db.AutoMigrate(&ds.User{})
 	if err != nil {
-		fmt.Println("Error migrating Dielty to db")
+		fmt.Println("Error migrating User to db")
 		return err
 	}
 
@@ -89,16 +84,6 @@ func MigrateRuling(db *gorm.DB) error {
 	err := db.AutoMigrate(&ds.Ruling{})
 	if err != nil {
 		fmt.Println("Error migrating Ruling to db")
-		return err
-	}
-
-	return nil
-}
-
-func MigrateCampaign(db *gorm.DB) error {
-	err := db.AutoMigrate(&ds.Campaign{})
-	if err != nil {
-		fmt.Println("Error migrating Campaign to db")
 		return err
 	}
 
