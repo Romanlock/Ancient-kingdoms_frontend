@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"kingdoms/internal/app/ds"
 	"kingdoms/internal/app/dsn"
@@ -65,70 +66,247 @@ func (a *Application) StartServer() {
 }
 
 func (a *Application) getKingdoms(ctx *gin.Context) {
+	var requestBody ds.GetKingdomsRequest
+	if err := ctx.BindJSON(&requestBody); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing request body:"+err.Error())
+		return
+	}
 
+	kingdoms, err := a.repo.GetKingdoms(requestBody)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error getting necessary kingdoms:"+err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusFound, kingdoms)
 }
 
 func (a *Application) getKingdom(ctx *gin.Context) {
 	var kingdom ds.Kingdom
 	if err := ctx.BindJSON(&kingdom); err != nil {
-		ctx.Error(err)
+		ctx.String(http.StatusBadRequest, "error parsing kingdom:"+err.Error())
 		return
 	}
 
 	necessaryKingdom, err := a.repo.GetKingdom(kingdom)
 	if err != nil {
-		ctx.Error(err)
+		ctx.String(http.StatusInternalServerError, "error getting kingdom:"+err.Error())
 		return
 	}
 	if necessaryKingdom == nil {
-		ctx.JSON(http.StatusNotFound, nil)
+		ctx.String(http.StatusNotFound, "no necessary kingdom")
+		return
 	}
 
 	ctx.JSON(http.StatusFound, necessaryKingdom)
 }
 
 func (a *Application) getRulers(ctx *gin.Context) {
+	var requestBody ds.GetRulersRequest
+	if err := ctx.BindJSON(&requestBody); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing request body:"+err.Error())
+		return
+	}
 
+	rulers, err := a.repo.GetRulers(requestBody)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error getting rulers:"+err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusFound, rulers)
 }
 
 func (a *Application) getRuler(ctx *gin.Context) {
+	var ruler ds.Ruler
+	if err := ctx.BindJSON(&ruler); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing ruler:"+err.Error())
+		return
+	}
 
+	necessaryRuler, err := a.repo.GetRuler(ruler)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error getting ruler:"+err.Error())
+		return
+	}
+	if necessaryRuler == nil {
+		ctx.String(http.StatusNotFound, "no necessary ruler")
+		return
+	}
+
+	ctx.JSON(http.StatusFound, necessaryRuler)
 }
 
 func (a *Application) addKingdom(ctx *gin.Context) {
+	var kingdom ds.Kingdom
+	if err := ctx.BindJSON(&kingdom); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing kingdom:"+err.Error())
+		return
+	}
 
+	err := a.repo.CreateKingdom(kingdom)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error creating kingdom:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusCreated, "creating kingdom done successfully")
 }
 
 func (a *Application) editKingdom(ctx *gin.Context) {
+	var kingdom ds.Kingdom
+	if err := ctx.BindJSON(&kingdom); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing ruler")
+		return
+	}
 
+	err := a.repo.EditKingdom(kingdom)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error editing kingdom:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "editing kingdom done successfully")
 }
 
 func (a *Application) kingdomAddToLastRuler(ctx *gin.Context) {
+	var kingdom ds.Kingdom
+	if err := ctx.BindJSON(&kingdom); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing kingdom:"+err.Error())
+		return
+	}
 
+	err := a.repo.KingdomAddToLastRuler(kingdom)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error kingdom additing:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "additing done successfully")
 }
 
 func (a *Application) editRuler(ctx *gin.Context) {
+	var ruler ds.Ruler
+	if err := ctx.BindJSON(&ruler); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing ruler:"+err.Error())
+		return
+	}
 
+	err := a.repo.EditRuler(ruler)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error editing ruler:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "edditing ruler done successfully")
 }
 
 func (a *Application) rulerStateChangeModerator(ctx *gin.Context) {
+	var requestBody ds.RulerStateChangeRequest
+	if err := ctx.BindJSON(&requestBody); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing request body:"+err.Error())
+		return
+	}
 
+	userRole, err := a.repo.GetUserRole(requestBody.User)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error getting user role:"+err.Error())
+		return
+	}
+	if userRole != "admin" {
+		ctx.String(http.StatusUnauthorized, "no enouth rules for executing this operation")
+		return
+	}
+
+	err = a.repo.RulerStateChange(requestBody.ID, requestBody.State)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error ruler state changing:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "ruler state changing done successfully")
 }
 
 func (a *Application) rulerStateChangeUser(ctx *gin.Context) {
+	var requestBody ds.RulerStateChangeRequest
+	if err := ctx.BindJSON(&requestBody); err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing request body:"+err.Error())
+		return
+	}
 
+	userRole, err := a.repo.GetUserRole(requestBody.User)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error getting user role:"+err.Error())
+		return
+	}
+
+	err = a.repo.RulerStateChange(requestBody.ID, requestBody.State)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error ruler state changing:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "ruler state changing done successfully")
 }
 
 func (a *Application) deleteKingdom(ctx *gin.Context) {
+	kingdomName, err := strconv.Atoi(ctx.Param("kingdom_name"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing kingdom name:"+err.Error())
+		return
+	}
 
+	err = a.repo.DeleteKingdom(kingdomName)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error deleting kingdom:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "deleting kingdom done successfully")
 }
 
 func (a *Application) deleteRuler(ctx *gin.Context) {
+	rulerName, err := strconv.Atoi(ctx.Param("ruler_name"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing ruler name:"+err.Error())
+		return
+	}
 
+	err = a.repo.DeleteRuler(rulerName)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error deleting ruler:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "deleting ruler done successfully")
 }
 
 func (a *Application) deleteKingdomRuler(ctx *gin.Context) {
+	kingdomName, err := strconv.Atoi(ctx.Param("kingdom_name"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing kingdom name")
+		return
+	}
 
+	rulerName, err := strconv.Atoi(ctx.Param("ruler_name"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing ruler name")
+		return
+	}
+
+	rulingID, err := strconv.Atoi(ctx.Param("ruling_id"))
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "error parsing rulingID")
+		return
+	}
+
+	err = a.repo.DeleteKingdomRuler(kingdomName, rulerName, rulingID)
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "error delering kingdom ruler:"+err.Error())
+		return
+	}
+
+	ctx.String(http.StatusNoContent, "deleting kingdom ruler done successfully")
 }
 
 func (a *Application) checkLogin(ctx *gin.Context) {
