@@ -15,3 +15,8 @@ type RulerStateChangeRequest struct {
 	State string
 	User  string
 }
+
+type CreateRulerForKingdomRequest struct {
+	Ruler   Ruler
+	Kingdom Kingdom
+}
