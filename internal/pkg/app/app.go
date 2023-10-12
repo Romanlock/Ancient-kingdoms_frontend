@@ -178,7 +178,7 @@ func (a *Application) CreateRulerForKingdom(ctx *gin.Context) {
 
 	err := a.repo.CreateRulerForKingdom(requestBody)
 	if err != nil {
-		ctx.String(http.StatusInternalServerError, "error kingdom additing:"+err.Error())
+		ctx.String(http.StatusInternalServerError, "error ruler for kingdom additing:"+err.Error())
 		return
 	}
 

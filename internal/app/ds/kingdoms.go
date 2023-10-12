@@ -21,18 +21,20 @@ type User struct {
 }
 
 type Ruler struct {
-	Id              uint           `gorm:"primaryKey;AUTO_INCREMENT"`
-	Name            string         `gorm:"type:varchar(50);unique;not null"`
-	State           string         `gorm:"type:varchar(50);not null"`
-	Date_of_birth   datatypes.Date `gorm:"not null"`
-	Begin_governing datatypes.Date `gorm:"not null"`
-	End_governing   datatypes.Date
+	Id             uint           `gorm:"primaryKey;AUTO_INCREMENT"`
+	Name           string         `gorm:"type:varchar(50);unique;not null"`
+	State          string         `gorm:"type:varchar(50);not null"`
+	DateOfBirth    datatypes.Date `gorm:"not null"`
+	BeginGoverning datatypes.Date `gorm:"not null"`
+	EndGoverning   datatypes.Date
 }
 
 type Ruling struct {
-	Id           uint    `gorm:"primaryKey:AUTO_INCREMENT"`
-	RulerRefer   int     `gorm:"not null"`
-	KingdomRefer int     `gorm:"not null"`
-	Ruler        Ruler   `gorm:"foreignKey:RulerRefer"`
-	Kingdom      Kingdom `gorm:"foreignKey:KingdomRefer"`
+	Id             uint           `gorm:"primaryKey:AUTO_INCREMENT"`
+	RulerRefer     int            `gorm:"not null"`
+	KingdomRefer   int            `gorm:"not null"`
+	Ruler          Ruler          `gorm:"foreignKey:RulerRefer"`
+	Kingdom        Kingdom        `gorm:"foreignKey:KingdomRefer"`
+	BeginGoverning datatypes.Date `gorm:"not null"`
+	EndGoverning   datatypes.Date
 }

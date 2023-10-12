@@ -78,13 +78,17 @@ func (r *Repository) GetKingdoms(requestBody ds.GetKingdomsRequest) ([]ds.Kingdo
 		}
 	}
 
+	if kingdomsToReturn == nil {
+		return []ds.Kingdom{}, errors.New("no necessary kingdoms found")
+	}
+
 	return kingdomsToReturn, nil
 }
 
 func (r *Repository) GetKingdom(kingdom ds.Kingdom) (ds.Kingdom, error) {
 	var kingdomToReturn ds.Kingdom
 
-	err := r.db.Where(&kingdom).First(&kingdomToReturn).Error
+	err := r.db.Where(kingdom).First(&kingdomToReturn).Error
 	if err != nil {
 		return ds.Kingdom{}, err
 	} else {
@@ -93,138 +97,125 @@ func (r *Repository) GetKingdom(kingdom ds.Kingdom) (ds.Kingdom, error) {
 }
 
 func (r *Repository) GetRulers(requestBody ds.GetRulersRequest) ([]ds.Ruler, error) {
+	var rulersToReturn []ds.Ruler
 
-	return []ds.Ruler{}, nil
+	var tx *gorm.DB = r.db
+
+	switch {
+	case requestBody.Num == 0 && requestBody.State != "":
+		err := tx.Where("state = ?", requestBody.State).Find(&rulersToReturn).Error
+		if err != nil {
+			return []ds.Ruler{}, err
+		}
+
+	case requestBody.Num != 0 && requestBody.State == "":
+		err := tx.Limit(requestBody.Num).Find(&rulersToReturn).Error
+		if err != nil {
+			return []ds.Ruler{}, err
+		}
+
+	case requestBody.Num != 0 && requestBody.State != "":
+		err := tx.Where("state = ?", requestBody.State).
+			Limit(requestBody.Num).
+			Find(&rulersToReturn).Error
+		if err != nil {
+			return []ds.Ruler{}, err
+		}
+
+	default:
+		err := tx.Find(&rulersToReturn).Error
+		if err != nil {
+			return []ds.Ruler{}, err
+		}
+	}
+
+	if rulersToReturn == nil {
+		return []ds.Ruler{}, errors.New("no necessary rulers found")
+	}
+
+	return rulersToReturn, nil
 }
 
 func (r *Repository) GetRuler(ruler ds.Ruler) (ds.Ruler, error) {
+	var rulerToReturn ds.Ruler
 
-	return ds.Ruler{}, nil
+	err := r.db.Where(ruler).First(&rulerToReturn).Error
+	if err != nil {
+		return ds.Ruler{}, err
+	} else {
+		return rulerToReturn, nil
+	}
 }
 
 func (r *Repository) CreateKingdom(kingdom ds.Kingdom) error {
-
-	return nil
+	return r.db.Create(&kingdom).Error
 }
 
 func (r *Repository) EditKingdom(kingdom ds.Kingdom) error {
+	return r.db.Model(&ds.Kingdom{}).
+		Where("name = ?", kingdom.Name).
+		Updates(kingdom).Error
+}
 
-	return nil
+func (r *Repository) CreateRuler(ruler ds.Ruler) error {
+	return r.db.Create(&ruler).Error
 }
 
 func (r *Repository) CreateRulerForKingdom(requestBody ds.CreateRulerForKingdomRequest) error {
+	err := r.CreateRuler(requestBody.Ruler)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	ruling := ds.Ruling{
+		BeginGoverning: requestBody.BeginGoverning,
+		Ruler:          requestBody.Ruler,
+		Kingdom:        requestBody.Kingdom,
+	}
+
+	return r.db.Create(&ruling).Error
 }
 
 func (r *Repository) EditRuler(ruler ds.Ruler) error {
-
-	return nil
+	return r.db.Model(&ds.Ruler{}).
+		Where("name = ?", ruler.Name).
+		Updates(ruler).Error
 }
 
 func (r *Repository) GetUserRole(username string) (string, error) {
+	user := &ds.User{}
 
-	return "", nil
+	err := r.db.Where("name = ?", username).First(&user).Error
+	if err != nil {
+		return "", err
+	}
+	if user == (&ds.User{}) {
+		return "", errors.New("no user found")
+	}
+
+	return user.Rank, nil
 }
 
 func (r *Repository) RulerStateChange(id int, state string) error {
-
-	return nil
+	return r.db.Model(&ds.Ruler{}).
+		Where("id = ?", id).
+		Update("state", state).Error
 }
 
 func (r *Repository) DeleteKingdom(kingdomName string) error {
-
-	return nil
+	return r.db.Model(&ds.Kingdom{}).
+		Where("name = ?", kingdomName).
+		Update("status", "Захвачено ящерами").Error
 }
 
 func (r *Repository) DeleteRuler(rulerName string) error {
-
-	return nil
+	return r.db.Model(&ds.Ruler{}).
+		Where("name = ?", rulerName).
+		Update("status", "Помер").Error
 }
 
 func (r *Repository) DeleteKingdomRuler(kingdomName string, rulerName string, rulingID int) error {
-
-	return nil
+	return r.db.Where("kingdom_name = ?", kingdomName).
+		Where("ruler_name = ?", rulerName).
+		Where("id = ?", rulingID).Delete(&ds.Ruling{}).Error
 }
-
-// func (r *Repository) GetKingdomByID(id int) (*ds.Kingdom, error) {
-// 	kingdom := &ds.Kingdom{}
-
-// 	err := r.db.First(kingdom, "id = ?", id).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return kingdom, nil
-// }
-
-// func (r *Repository) GetKingdomByName(name string) (*ds.Kingdom, error) {
-// 	kingdom := &ds.Kingdom{}
-// 	err := r.db.First(kingdom, "name = ?", name).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return kingdom, nil
-// }
-
-// func (r *Repository) SearchKingdoms(kingdomName string) ([]ds.Kingdom, error) {
-// 	kingdoms := []ds.Kingdom{}
-
-// 	allKingdoms, allKingdomsErr := r.GetAllKingdoms()
-
-// 	if allKingdomsErr != nil {
-// 		return nil, allKingdomsErr
-// 	}
-
-// 	for _, kingdom := range allKingdoms {
-// 		if strings.Contains(strings.ToLower(kingdom.Name), strings.ToLower(kingdomName)) {
-// 			kingdoms = append(kingdoms, kingdom)
-// 		}
-// 	}
-
-// 	return kingdoms, nil
-// }
-
-// func (r *Repository) GetAllKingdoms() ([]ds.Kingdom, error) {
-// 	kingdoms := []ds.Kingdom{}
-
-// 	err := r.db.Find((&kingdoms)).Error
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return kingdoms, nil
-// }
-
-// func (r *Repository) FilterActiveKingdoms(kingdoms []ds.Kingdom) []ds.Kingdom {
-// 	newKingdoms := []ds.Kingdom{}
-
-// 	for _, kingdom := range kingdoms {
-// 		if kingdom.State == "Процветает" {
-// 			newKingdoms = append(newKingdoms, kingdom)
-// 		}
-// 	}
-
-// 	return newKingdoms
-// }
-
-// func (r *Repository) ChangeKingdomVisibility(kingdomName string) error {
-// 	kingdom, err := r.GetKingdomByName(kingdomName)
-
-// 	if err != nil {
-// 		log.Println(err)
-// 		return err
-// 	}
-
-// 	newStatus := ""
-
-// 	if kingdom.State == "Процветает" {
-// 		newStatus = "Захвачено ящерами"
-// 	} else {
-// 		newStatus = "Процветает"
-// 	}
-
-// 	return r.db.Model(&ds.Kingdom{}).Where("name = ?", kingdomName).Update("state", newStatus).Error
-// }

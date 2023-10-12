@@ -1,5 +1,7 @@
 package ds
 
+import "gorm.io/datatypes"
+
 type GetKingdomsRequest struct {
 	Ruler string
 	State string
@@ -17,6 +19,7 @@ type RulerStateChangeRequest struct {
 }
 
 type CreateRulerForKingdomRequest struct {
-	Ruler   Ruler
-	Kingdom Kingdom
+	Ruler          Ruler
+	Kingdom        Kingdom
+	BeginGoverning datatypes.Date
 }
