@@ -2,7 +2,9 @@ package app
 
 import (
 	"log"
+	"net/http"
 
+	"kingdoms/internal/app/ds"
 	"kingdoms/internal/app/dsn"
 	"kingdoms/internal/app/repository"
 
@@ -60,6 +62,89 @@ func (a *Application) StartServer() {
 	a.r.Run(":8000")
 
 	log.Println("Server is down")
+}
+
+func (a *Application) getKingdoms(ctx *gin.Context) {
+
+}
+
+func (a *Application) getKingdom(ctx *gin.Context) {
+	var kingdom ds.Kingdom
+	if err := ctx.BindJSON(&kingdom); err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	necessaryKingdom, err := a.repo.GetKingdom(kingdom)
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+	if necessaryKingdom == nil {
+		ctx.JSON(http.StatusNotFound, nil)
+	}
+
+	ctx.JSON(http.StatusFound, necessaryKingdom)
+}
+
+func (a *Application) getRulers(ctx *gin.Context) {
+
+}
+
+func (a *Application) getRuler(ctx *gin.Context) {
+
+}
+
+func (a *Application) addKingdom(ctx *gin.Context) {
+
+}
+
+func (a *Application) editKingdom(ctx *gin.Context) {
+
+}
+
+func (a *Application) kingdomAddToLastRuler(ctx *gin.Context) {
+
+}
+
+func (a *Application) editRuler(ctx *gin.Context) {
+
+}
+
+func (a *Application) rulerStateChangeModerator(ctx *gin.Context) {
+
+}
+
+func (a *Application) rulerStateChangeUser(ctx *gin.Context) {
+
+}
+
+func (a *Application) deleteKingdom(ctx *gin.Context) {
+
+}
+
+func (a *Application) deleteRuler(ctx *gin.Context) {
+
+}
+
+func (a *Application) deleteKingdomRuler(ctx *gin.Context) {
+
+}
+
+func (a *Application) checkLogin(ctx *gin.Context) {
+
+}
+
+func (a *Application) login(ctx *gin.Context) {
+
+}
+
+func (a *Application) signup(ctx *gin.Context) {
+
+}
+
+func (a *Application) logout(ctx *gin.Context) {
+
 }
 
 // func (a *Application) loadKingdoms(c *gin.Context) {
