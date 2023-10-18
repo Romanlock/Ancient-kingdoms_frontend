@@ -18,8 +18,8 @@ type RulerStateChangeRequest struct {
 	User  string
 }
 
-type CreateRulerForKingdomRequest struct {
-	Ruler          Ruler
+type CreateKindomForRulerRequest struct {
 	Kingdom        Kingdom
+	Ruler          Ruler
 	BeginGoverning datatypes.Date
 }

@@ -42,9 +42,9 @@ func (a *Application) StartServer() {
 	a.r.GET("rulers", a.getRulers)
 	a.r.GET("ruler", a.getRuler)
 
-	a.r.PUT("kingdom/add", a.addKingdom)
+	a.r.POST("kingdom/add", a.addKingdom)
 	a.r.PUT("kingdom/edit", a.editKingdom)
-	a.r.PUT("kingdom/ruler_to_kingdom", a.CreateRulerForKingdom)
+	a.r.POST("kingdom/kingdom_to_ruler", a.CreateKindomForRuler)
 
 	a.r.PUT("ruler/edit", a.editRuler)
 	a.r.PUT("ruler/state_change/moderator", a.rulerStateChangeModerator)
@@ -169,16 +169,16 @@ func (a *Application) editKingdom(ctx *gin.Context) {
 	ctx.String(http.StatusNoContent, "editing kingdom done successfully")
 }
 
-func (a *Application) CreateRulerForKingdom(ctx *gin.Context) {
-	var requestBody ds.CreateRulerForKingdomRequest
+func (a *Application) CreateKindomForRuler(ctx *gin.Context) {
+	var requestBody ds.CreateKindomForRulerRequest
 	if err := ctx.BindJSON(&requestBody); err != nil {
 		ctx.String(http.StatusBadRequest, "error parsing kingdom:"+err.Error())
 		return
 	}
 
-	err := a.repo.CreateRulerForKingdom(requestBody)
+	err := a.repo.CreateKindomForRuler(requestBody)
 	if err != nil {
-		ctx.String(http.StatusInternalServerError, "error ruler for kingdom additing:"+err.Error())
+		ctx.String(http.StatusInternalServerError, "error kingdom to ruler additing:"+err.Error())
 		return
 	}
 

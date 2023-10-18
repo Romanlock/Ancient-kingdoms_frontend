@@ -161,8 +161,8 @@ func (r *Repository) CreateRuler(ruler ds.Ruler) error {
 	return r.db.Create(&ruler).Error
 }
 
-func (r *Repository) CreateRulerForKingdom(requestBody ds.CreateRulerForKingdomRequest) error {
-	err := r.CreateRuler(requestBody.Ruler)
+func (r *Repository) CreateKindomForRuler(requestBody ds.CreateKindomForRulerRequest) error {
+	err := r.CreateKingdom(requestBody.Kingdom)
 	if err != nil {
 		return err
 	}
