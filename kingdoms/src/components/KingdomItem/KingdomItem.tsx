@@ -12,9 +12,9 @@ interface Props {
 
 const KingdomItem: React.FC<Props> = ({kingdoms}) => {
     return (
-        <div className="feed-kingdom">
+        <div className="feed-kingdoms">
           {kingdoms.map((kingdom, index) => (
-            <div className={`feed-kingdom__kingdom${index}`} key={index}>
+            <div className={`feed-kingdom feed-kingdom__kingdom${index}`} key={index}>
               <h2>{kingdom.title}</h2>
               <p>{kingdom.description}</p>
               <img src={kingdom.img} alt={kingdom.title} />
