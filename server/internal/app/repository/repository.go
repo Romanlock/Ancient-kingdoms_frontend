@@ -205,7 +205,7 @@ func (r *Repository) RulerStateChange(id int, state string) error {
 func (r *Repository) DeleteKingdom(kingdomName string) error {
 	return r.db.Model(&ds.Kingdom{}).
 		Where("name = ?", kingdomName).
-		Update("status", "Захвачено ящерами").Error
+		Update("state", "Захвачено ящерами").Error
 }
 
 func (r *Repository) DeleteRuler(rulerName string) error {

@@ -42,7 +42,7 @@ func (a *Application) StartServer() {
 	a.r.GET("rulers", a.getRulers)
 	a.r.GET("ruler", a.getRuler)
 
-	a.r.PUT("kingdom/add", a.addKingdom)
+	a.r.POST("kingdom/add", a.addKingdom)
 	a.r.PUT("kingdom/edit", a.editKingdom)
 	a.r.PUT("kingdom/ruler_to_kingdom", a.CreateRulerForKingdom)
 
@@ -166,7 +166,7 @@ func (a *Application) editKingdom(ctx *gin.Context) {
 		return
 	}
 
-	ctx.String(http.StatusNoContent, "editing kingdom done successfully")
+	ctx.JSON(http.StatusNoContent, kingdom)
 }
 
 func (a *Application) CreateRulerForKingdom(ctx *gin.Context) {
