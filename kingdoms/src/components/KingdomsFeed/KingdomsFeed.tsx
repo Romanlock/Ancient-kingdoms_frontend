@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import KingdomItem from '../KingdomItem/KingdomItem';
 import MyInput from '../UI/Input/MyInput';
 
+interface Kingdom {
+  title: string;
+  description: string;
+  img: string;
+}
+
 const KingdomsFeed:React.FC = () => {
 
-  const kingdoms = [
+  const kingdoms: Kingdom[] = [
     {
       title: "Владимиро-Суздальское",
       description: "Величайший Рус - Добрыня Никитич родом из этого княжества. Ходили слухи, что здесь умели варить зелья силы и храбрости, поэтому именно тут рождались и росли самые и великие Русы",  
@@ -37,8 +43,19 @@ const KingdomsFeed:React.FC = () => {
     },
   ];
 
-  const [title, setTitle] = useState('');
   const [searchKingdom, setSearchKingdom] = useState('');
+
+  function getSearchedKingdoms(searchKingdom: string): Kingdom[] {
+    const necessaryKingdoms: Kingdom[] = [];
+    kingdoms.forEach(kingdom => {
+      if (kingdom.title.toLowerCase().includes(searchKingdom.toLocaleLowerCase())) {
+        necessaryKingdoms.push(kingdom);
+      }
+    });
+    return necessaryKingdoms;
+  }
+
+  const necessaryKingdoms = getSearchedKingdoms(searchKingdom);
   
   return (
     <div className="page">
@@ -47,12 +64,12 @@ const KingdomsFeed:React.FC = () => {
       </header>
       <div className="content">
         <MyInput 
-          value={title}
-          onChange={e => setTitle(e.target.value)}
+          value={searchKingdom}
+          onChange={e => setSearchKingdom(e.target.value)}
           type="text" 
           placeholder="Введите название королевства"
         />
-        <KingdomItem kingdoms={kingdoms} />
+        <KingdomItem kingdoms={necessaryKingdoms} />
       </div>
     </div>
   );

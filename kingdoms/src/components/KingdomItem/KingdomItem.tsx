@@ -45,7 +45,7 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
               </div>
             </div>
           </div>
-        ))};
+        ))}
       </div>
     );
 }
