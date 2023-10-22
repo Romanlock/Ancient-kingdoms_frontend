@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import MyButton from "../UI/Button/MyButton";
 
 interface Kingdom {
     title: string;
@@ -34,10 +36,12 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
             </div>
             <div className="feed-kingdom__kingdom__btns">
               <div className="feed-kingdom__kingdom__about-btn btn-primary-defautl">
-                <button onClick={kingdomAboutFunc}>Подробнее</button>
+                <Link to="/kingdom">
+                  <MyButton>Подробнее</MyButton>
+                </Link>
               </div>
               <div className="feed-kingdom__kingdom__delete-btn btn-primary-default">
-                <button onClick={kingdomDeleteFunc}>Удалить</button>
+                <MyButton onClick={kingdomDeleteFunc}>Удалить</MyButton>
               </div>
             </div>
           </div>

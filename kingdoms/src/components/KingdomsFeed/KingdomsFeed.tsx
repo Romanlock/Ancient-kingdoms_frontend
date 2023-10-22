@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import KingdomItem from '../KingdomItem/KingdomItem';
+import MyInput from '../UI/Input/MyInput';
 
 const KingdomsFeed:React.FC = () => {
 
@@ -35,6 +36,9 @@ const KingdomsFeed:React.FC = () => {
       img: "../image/C.png",
     },
   ];
+
+  const [title, setTitle] = useState('');
+  const [searchKingdom, setSearchKingdom] = useState('');
   
   return (
     <div className="page">
@@ -42,6 +46,12 @@ const KingdomsFeed:React.FC = () => {
         Топ 6 княжеств Древних Русов
       </header>
       <div className="content">
+        <MyInput 
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          type="text" 
+          placeholder="Введите название королевства"
+        />
         <KingdomItem kingdoms={kingdoms} />
       </div>
     </div>
