@@ -1,23 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import MyButton from "../UI/Button/MyButton";
+import { Api } from "../../utils/api/api";
 
 interface Kingdom {
-    title: string;
-    description: string;
-    img: string;
+  ID: number,
+  Name: string,
+  Area: number,
+  Capital: string,
+  Image: string,
+  Description: string;
+  State: string;
 }
 
 interface Props {
-    kingdoms: Kingdom[];
+  kingdoms: Kingdom[];
 }
 
 const KingdomItem: React.FC<Props> = ({kingdoms}) => {
+  const api = new Api();
+
+  console.log(kingdoms);
+
   const kingdomAboutFunc = () => {
     console.log('about');
   }
 
   const kingdomDeleteFunc = () => {
+    // api.getKingdoms('All', '')
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    // //console.log(a);
     console.log('delete');
   }
 
@@ -26,13 +40,13 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
         {kingdoms.map((kingdom, index) => (
           <div className={`feed-kingdom feed-kingdom__kingdom${index}`} key={index}>
             <div className="feed-kingdom__kingdom__title">
-              <h2>{kingdom.title}</h2>
+              <h2>{kingdom.Name}</h2>
             </div>
             <div className="feed-kingdom__kingdom__description">
-              <p>{kingdom.description}</p>
+              <p>{kingdom.Description}</p>
               </div>
             <div className="feed-kingdom__kingdom__img">
-              <img src={kingdom.img} alt={kingdom.title} />
+              <img src={kingdom.Image} alt={kingdom.Name} />
             </div>
             <div className="feed-kingdom__kingdom__btns">
               <div className="feed-kingdom__kingdom__about-btn btn-primary-defautl">
