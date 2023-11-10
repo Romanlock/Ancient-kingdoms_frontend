@@ -20,8 +20,6 @@ interface Props {
 const KingdomItem: React.FC<Props> = ({kingdoms}) => {
   const api = new Api();
 
-  console.log(kingdoms);
-
   const kingdomAboutFunc = () => {
     console.log('about');
   }

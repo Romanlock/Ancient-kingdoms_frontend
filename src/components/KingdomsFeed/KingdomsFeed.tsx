@@ -27,7 +27,7 @@ const KingdomsFeed: React.FC = () => {
         console.error('Ошибка при выполнении запроса getKingdoms:', error);
         throw error;
       });
-  }, []);
+  }, [searchKingdom]);
 
   function getSearchedKingdoms(searchKingdom: string): Kingdom[] {
     if (searchKingdom === '') {
