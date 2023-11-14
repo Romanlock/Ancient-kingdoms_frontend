@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { response } from 'express';
 
 export class Api {
   private static instance: Api;
@@ -32,12 +33,19 @@ export class Api {
       const res = response.data;
       if (res.status === 'ok') {
         return res.body;
+      // } else if (res.status === 'error' &&
+      //            res.message === 'error getting necessary kingdoms: record not found') {
+      //             return null;
       } else {
-        throw new Error('Ошибка при выполнении запроса getKingdoms');
+        return null;
+
+        //throw new Error('Ошибка при выполнении запроса getKingdoms');
       }
     } catch (error) {
+      // console.log(response)
       console.error('Ошибка при выполнении запроса getKingdoms:', error);
-      throw error;
+      return null;
+      // throw error;
     }
   }
 }

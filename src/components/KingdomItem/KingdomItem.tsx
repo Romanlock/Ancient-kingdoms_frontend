@@ -35,7 +35,7 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
 
   return (
       <div className="feed-kingdoms">
-        {kingdoms.map((kingdom, index) => (
+        {kingdoms?.map((kingdom, index) => (
           <div className={`feed-kingdom feed-kingdom__kingdom${index}`} key={index}>
             <div className="feed-kingdom__kingdom__title">
               <h2>{kingdom.Name}</h2>
@@ -44,7 +44,7 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
               <p>{kingdom.Description}</p>
               </div>
             <div className="feed-kingdom__kingdom__img">
-              <img src={kingdom.Image} alt={kingdom.Name} />
+              <img src={"data:image/jpg;base64, " + kingdom.Image} alt={kingdom.Name} />
             </div>
             <div className="feed-kingdom__kingdom__btns">
               <div className="feed-kingdom__kingdom__about-btn btn-primary-defautl">

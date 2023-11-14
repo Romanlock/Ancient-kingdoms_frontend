@@ -19,8 +19,9 @@ const KingdomsFeed: React.FC = () => {
   const [searchKingdom, setSearchKingdom] = useState('');
 
   useEffect(() => {
-    api.getKingdoms('All', '')
+    api.getKingdoms(searchKingdom ? searchKingdom : 'All', '')
       .then((data: any) => {
+        console.log(data)
         setKingdoms(data);
       })
       .catch((error: any) => {
@@ -29,22 +30,31 @@ const KingdomsFeed: React.FC = () => {
       });
   }, [searchKingdom]);
 
-  function getSearchedKingdoms(searchKingdom: string): Kingdom[] {
-    if (searchKingdom === '') {
-      return kingdoms;
-    }
+  // function getSearchedKingdoms(searchKingdom: string): Kingdom[] {
+  //   if (searchKingdom === '') {
+  //     return kingdoms;
+  //   }
 
-    const necessaryKingdoms: Kingdom[] = [];
-    kingdoms.forEach((kingdom: Kingdom) => {
-      if (kingdom.Name.toLowerCase().includes(searchKingdom.toLowerCase())) {
-        necessaryKingdoms.push(kingdom);
-      }
-    });
+  //   api.getKingdoms('All', '')
+  //     .then((data: any) => {
+  //       setKingdoms(data);
+  //     })
+  //     .catch((error: any) => {
+  //       console.error('Ошибка при выполнении запроса getKingdoms:', error);
+  //       throw error;
+  //     });
 
-    return necessaryKingdoms;
-  }
+  //   const necessaryKingdoms: Kingdom[] = [];
+  //   kingdoms.forEach((kingdom: Kingdom) => {
+  //     if (kingdom.Name.toLowerCase().includes(searchKingdom.toLowerCase())) {
+  //       necessaryKingdoms.push(kingdom);
+  //     }
+  //   });
 
-  const necessaryKingdoms = getSearchedKingdoms(searchKingdom);
+  //   return necessaryKingdoms;
+  // }
+
+  // const necessaryKingdoms = getSearchedKingdoms(searchKingdom);
 
   return (
     <div className="page">
@@ -58,7 +68,7 @@ const KingdomsFeed: React.FC = () => {
           type="text"
           placeholder="Введите название королевства"
         />
-        <KingdomItem kingdoms={necessaryKingdoms} />
+        <KingdomItem kingdoms={kingdoms} />
       </div>
     </div>
   );
