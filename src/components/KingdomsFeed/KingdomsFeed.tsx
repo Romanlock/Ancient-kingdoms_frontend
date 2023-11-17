@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import KingdomItem from '../KingdomItem/KingdomItem';
 import MyInput from '../UI/Input/MyInput';
-import { Api } from '../../utils/api/api';
+import { KingdomsApi } from '../../utils/api/KingdomsApi/KingdomsApi'
 
 interface Kingdom {
   ID: number,
@@ -14,12 +14,20 @@ interface Kingdom {
 }
 
 const KingdomsFeed: React.FC = () => {
-  const api = new Api();
+  const kingdomsApi = new KingdomsApi();
   const [kingdoms, setKingdoms] = useState<Kingdom[]>([]);
   const [searchKingdom, setSearchKingdom] = useState('');
 
   useEffect(() => {
-    api.getKingdoms(searchKingdom ? searchKingdom : 'All', '')
+    const getKingdomsRequestParams = {
+      kingdomName: '',
+      rulerName: 'All',
+      state: '',
+    }
+
+    getKingdomsRequestParams.kingdomName = searchKingdom ? searchKingdom : '';
+
+    kingdomsApi.getKingdoms(getKingdomsRequestParams)
       .then((data: any) => {
         console.log(data)
         setKingdoms(data);

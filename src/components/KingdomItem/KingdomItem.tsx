@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import MyButton from "../UI/Button/MyButton";
-import { Api } from "../../utils/api/api";
+import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
 
 interface Kingdom {
   ID: number,
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const KingdomItem: React.FC<Props> = ({kingdoms}) => {
-  const api = new Api();
+  const kingdomsApi = new KingdomsApi();
 
   const kingdomAboutFunc = () => {
     console.log('about');
@@ -36,23 +36,23 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
   return (
       <div className="feed-kingdoms">
         {kingdoms?.map((kingdom, index) => (
-          <div className={`feed-kingdom feed-kingdom__kingdom${index}`} key={index}>
-            <div className="feed-kingdom__kingdom__title">
-              <h2>{kingdom.Name}</h2>
+          <div className={`feed-kingdom feed-kingdom__kingdom-${index}`} key={index}>
+            <div className="feed-kingdom__kingdom_title">
+              <div className="feed-kingdom__kingdom_title-text text-h2-medium">{kingdom.Name}</div>
             </div>
-            <div className="feed-kingdom__kingdom__description">
-              <p>{kingdom.Description}</p>
-              </div>
-            <div className="feed-kingdom__kingdom__img">
+            {/* <div className="feed-kingdom__kingdom_description">
+              <div className="feed-kingdom__kingdom_description-text text-base1-medium">{kingdom.Description}</div>
+            </div> */}
+            <div className="feed-kingdom__kingdom_img">
               <img src={"data:image/jpg;base64, " + kingdom.Image} alt={kingdom.Name} />
             </div>
-            <div className="feed-kingdom__kingdom__btns">
-              <div className="feed-kingdom__kingdom__about-btn btn-primary-defautl">
+            <div className="feed-kingdom__kingdom_btns">
+              <div className="feed-kingdom__kingdom__about_btn btn-primary-defautl">
                 <Link to="/kingdom">
                   <MyButton>Подробнее</MyButton>
                 </Link>
               </div>
-              <div className="feed-kingdom__kingdom__delete-btn btn-primary-default">
+              <div className="feed-kingdom__kingdom__delete_btn btn-primary-default">
                 <MyButton onClick={kingdomDeleteFunc}>Удалить</MyButton>
               </div>
             </div>

@@ -1,22 +1,28 @@
 import axios from 'axios';
 import { response } from 'express';
 
-export class Api {
-  private static instance: Api;
+interface GetKingdomsRequestParams {
+  kingdomName: string,
+  rulerName: string,
+  state: string,
+}
+
+export class KingdomsApi {
+  private static instance: KingdomsApi;
   config!: { name: string, url: string }[];
 
   constructor() {
-    if (Api.instance) {
-      return Api.instance;
+    if (KingdomsApi.instance) {
+      return KingdomsApi.instance;
     }
 
-    Api.instance = this;
+    KingdomsApi.instance = this;
     this.config = [
       { name: 'getKingdoms', url: '/api/kingdoms' },
     ];
   }
 
-  async getKingdoms(ruler: string, state: string) {
+  async getKingdoms({kingdomName, rulerName, state}: GetKingdomsRequestParams) {
     const configItem = this.config.find((item) => item.name === 'getKingdoms');
     if (!configItem) {
       throw new Error('Не найдена конфигурация для getKingdoms');
@@ -25,8 +31,9 @@ export class Api {
     try {
       const response = await axios.get(configItem.url, {
         params: {
-          ruler,
-          state
+          kingdomName,
+          rulerName,
+          state,
         }
       });
 
