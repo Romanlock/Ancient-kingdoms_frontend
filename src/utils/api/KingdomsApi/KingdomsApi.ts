@@ -1,5 +1,5 @@
+import { mockedGetKingdoms, mockedGetKingdom } from '../../serverMock/KingdomsMock/KingdomsMock';
 import axios from 'axios';
-import { response } from 'express';
 
 interface GetKingdomsRequestParams {
   kingdomName: string,
@@ -19,6 +19,7 @@ export class KingdomsApi {
     KingdomsApi.instance = this;
     this.config = [
       { name: 'getKingdoms', url: '/api/kingdoms' },
+      { name: 'getKingdomByID', url: '/api/kingdom' },
     ];
   }
 
@@ -40,19 +41,38 @@ export class KingdomsApi {
       const res = response.data;
       if (res.status === 'ok') {
         return res.body;
-      // } else if (res.status === 'error' &&
-      //            res.message === 'error getting necessary kingdoms: record not found') {
-      //             return null;
       } else {
         return null;
-
-        //throw new Error('Ошибка при выполнении запроса getKingdoms');
       }
     } catch (error) {
-      // console.log(response)
       console.error('Ошибка при выполнении запроса getKingdoms:', error);
-      return null;
-      // throw error;
+      return mockedGetKingdoms();
     }
   }
+
+  async getKingdomByID(id: Number) {
+    const configItem = this.config.find((item) => item.name === 'getKingdomByID');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для getKingdoms');
+    }
+
+    try {
+      const response = await axios.get(configItem.url, {
+        params: {
+          id,
+        }
+      });
+
+      const res = response.data;
+      if (res.status === 'ok') {
+        return res.body;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Ошибка при выполнении запроса getKingdoms:', error);
+      return mockedGetKingdom();  
+    }
+  }
+
 }

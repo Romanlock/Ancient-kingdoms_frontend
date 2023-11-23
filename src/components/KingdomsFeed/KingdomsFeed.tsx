@@ -2,16 +2,7 @@ import React, { useState, useEffect } from 'react';
 import KingdomItem from '../KingdomItem/KingdomItem';
 import MyInput from '../UI/Input/MyInput';
 import { KingdomsApi } from '../../utils/api/KingdomsApi/KingdomsApi'
-
-interface Kingdom {
-  ID: number,
-  Name: string,
-  Area: number,
-  Capital: string,
-  Image: string,
-  Description: string;
-  State: string;
-}
+import { Kingdom } from '../../dataStrucrures/KingdomInterfase';
 
 const KingdomsFeed: React.FC = () => {
   const kingdomsApi = new KingdomsApi();
@@ -29,7 +20,6 @@ const KingdomsFeed: React.FC = () => {
 
     kingdomsApi.getKingdoms(getKingdomsRequestParams)
       .then((data: any) => {
-        console.log(data)
         setKingdoms(data);
       })
       .catch((error: any) => {
@@ -37,32 +27,6 @@ const KingdomsFeed: React.FC = () => {
         throw error;
       });
   }, [searchKingdom]);
-
-  // function getSearchedKingdoms(searchKingdom: string): Kingdom[] {
-  //   if (searchKingdom === '') {
-  //     return kingdoms;
-  //   }
-
-  //   api.getKingdoms('All', '')
-  //     .then((data: any) => {
-  //       setKingdoms(data);
-  //     })
-  //     .catch((error: any) => {
-  //       console.error('Ошибка при выполнении запроса getKingdoms:', error);
-  //       throw error;
-  //     });
-
-  //   const necessaryKingdoms: Kingdom[] = [];
-  //   kingdoms.forEach((kingdom: Kingdom) => {
-  //     if (kingdom.Name.toLowerCase().includes(searchKingdom.toLowerCase())) {
-  //       necessaryKingdoms.push(kingdom);
-  //     }
-  //   });
-
-  //   return necessaryKingdoms;
-  // }
-
-  // const necessaryKingdoms = getSearchedKingdoms(searchKingdom);
 
   return (
     <div className="page">
