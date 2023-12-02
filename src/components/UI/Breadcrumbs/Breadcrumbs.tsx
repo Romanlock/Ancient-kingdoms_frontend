@@ -1,22 +1,15 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 
-const Breadcrumbs: React.FC = () => {
-   const location = useLocation();
-   const pathnames = location.pathname.split('/').filter((x) => x);
-
-   return (
-       <nav>
-           {pathnames.map((path, index) => {
-               const to = `/${pathnames.slice(0, index + 1).join('/')}`;
-               return (
-                    <Link to={to}>
-                        {path}/
-                    </Link>
-               );
-           })}
-       </nav>
-   );
-};
+function Breadcrumbs() {
+  return (
+    <Breadcrumb>
+      <Breadcrumb.Item href="#">Home</Breadcrumb.Item>
+      <Breadcrumb.Item href="https://getbootstrap.com/docs/4.0/components/breadcrumb/">
+        Library
+      </Breadcrumb.Item>
+      <Breadcrumb.Item active>Data</Breadcrumb.Item>
+    </Breadcrumb>
+  );
+}
 
 export default Breadcrumbs;

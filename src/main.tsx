@@ -2,10 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import KingdomsFeed from './components/KingdomsFeed/KingdomsFeed';
 import KingdomPage from './components/KingdomPage/KingdomPage';
-import Header from './components/Header/Header';
-import Sidebar from './components/Sidebar/SidebarUser';
+import NavbarUser from './components/Navbar/NavbarUser';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { AuthProvider } from './contexts/authorizationContext';
+import Breadcrumbs from './components/UI/Breadcrumbs/Breadcrumbs';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -21,10 +20,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <Header />
-      <Sidebar />
+      <NavbarUser />
+      <Breadcrumbs />
       <RouterProvider router={router} />
-    </AuthProvider>
   </React.StrictMode>
 );

@@ -2,12 +2,12 @@
 @import url(./components/KingdomsFeed/KingdomsFeed.css);
 
 #root {
-    display: grid;
-    grid-template-areas: 
+    /* display: grid;    */
+    /* grid-template-areas: 
     "sidebar header"
-    "sidebar content";
+    "sidebar content"; */
     grid-template-rows: 77px 1fr;
-    grid-template-columns: min-content 1fr;
+    grid-template-columns: auto 1fr;
     width: 100%;
     height: 100%;
     position: absolute;

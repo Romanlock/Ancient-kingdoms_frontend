@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import MyButton from "../UI/Button/MyButton";
-import Breadcrumbs from '../UI/Breadcrumbs/Breadcrumbs';
+import { Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
 import { Kingdom } from "../../dataStrucrures/KingdomInterfase";
 
@@ -31,7 +31,6 @@ const KingdomPage: React.FC = () => {
 
   return (
    <div className="kingdom-page">
-        <Breadcrumbs></Breadcrumbs>
        <div className="kingdom">
            <div className="kingdom__title">
                <h2>{kingdom.Name}</h2>
@@ -54,7 +53,7 @@ const KingdomPage: React.FC = () => {
        </div>
        <div className="kingdom-page__btns">
            <Link to="/kingdom">
-               <MyButton className="btn-primary kingdom-page__back-btn">На главную</MyButton>
+               <Button className="btn-primary kingdom-page__back-btn">На главную</Button>
            </Link>
        </div>
    </div>

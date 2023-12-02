@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import MyButton from "../UI/Button/MyButton";
+import { Button } from "react-bootstrap";
 
 interface Kingdom {
   Id: number,
@@ -34,11 +34,11 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
             <div className="feed-kingdom__kingdom_btns">
               <div className="feed-kingdom__kingdom__about_btn btn-primary-defautl">
                 <Link to={`/kingdom/${kingdom.Id}`}>
-                  <MyButton>Подробнее</MyButton>
+                  <Button>Подробнее</Button>
                 </Link>
               </div>
               <div className="feed-kingdom__kingdom__delete_btn btn-primary-default">
-                <MyButton onClick={kingdomDeleteFunc}>Удалить</MyButton>
+                <Button onClick={kingdomDeleteFunc}>Удалить</Button>
               </div>
             </div>
           </div>
