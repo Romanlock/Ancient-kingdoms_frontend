@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
 import { Kingdom } from "../../dataStrucrures/KingdomInterfase";
 

@@ -5,6 +5,7 @@ import KingdomPage from './components/KingdomPage/KingdomPage';
 import NavbarUser from './components/Navbar/NavbarUser';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Breadcrumbs from './components/UI/Breadcrumbs/Breadcrumbs';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
 const router = createBrowserRouter([
