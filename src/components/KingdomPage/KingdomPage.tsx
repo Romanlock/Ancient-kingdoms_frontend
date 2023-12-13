@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button } from 'react-bootstrap';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
-import { Kingdom } from "../../dataStrucrures/KingdomInterfase";
+import { Kingdom } from "../../dataStrucrures/KingdomInterface";
 
 const KingdomPage: React.FC = () => {
   const kingdomsApi = new KingdomsApi();
@@ -10,22 +10,19 @@ const KingdomPage: React.FC = () => {
   const { id } = useParams();
 
   useEffect(() => {
-      kingdomsApi.getKingdomByID(+id!)
-            .then((data: Kingdom) => {
-                setKingdom({
-                Id: data.Id,
-                Name: data.Name,
-                Area: data.Area,
-                Capital: data.Capital,
-                Image: data.Image,
-                Description: data.Description,
-                State: data.State,
-                });          
-            })
+    const getKingdomInfo = async () => {
+      if (!id) {
+        return;
+      }
+      const kingdom = await kingdomsApi.getKingdomByID(+id);
+      setKingdom(kingdom);
+    }
+
+    getKingdomInfo();
   }, [id]);
 
   if (!kingdom) {
-      return null; 
+      return; 
   }
 
   return (
@@ -44,7 +41,7 @@ const KingdomPage: React.FC = () => {
                <h2>{kingdom.Description}</h2>
            </div>
            <div className="kingdom__img">
-               <img src={"data:image/jpg;base64, " + kingdom.Image} alt={kingdom.Name} />
+               <img src={kingdom.Image} alt={kingdom.Name} />
            </div>
            <div className="kingdom__state">
                <h2>{kingdom.State}</h2>

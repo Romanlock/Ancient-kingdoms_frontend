@@ -1,16 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button } from "react-bootstrap";
-
-interface Kingdom {
-  Id: number,
-  Name: string,
-  Area: number,
-  Capital: string,
-  Image: string,
-  Description: string;
-  State: string;
-}
+import { Button, Container, Row, Col } from "react-bootstrap";
+import { Kingdom } from "../../dataStrucrures/KingdomInterface";
 
 interface Props {
   kingdoms: Kingdom[];
@@ -22,29 +13,42 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
   }
 
   return (
-      <div className="feed-kingdoms">
+    <Container className="feed-kingdoms">
+      <Row style={{justifyContent: 'center'}}>
         {kingdoms?.map((kingdom, index) => (
-          <div className={`feed-kingdom feed-kingdom__kingdom-${kingdom.Id}`} key={index}>
+          <Col xs={12} sm={6} md={4} lg={2} 
+          className={`feed-kingdom feed-kingdom__kingdom-${kingdom.ID} m-1 p-1`} 
+          key={index}>
             <div className="feed-kingdom__kingdom_title">
               <div className="feed-kingdom__kingdom_title-text text-h2-medium">{kingdom.Name}</div>
             </div>
             <div className="feed-kingdom__kingdom_img">
-              <img src={"data:image/jpg;base64, " + kingdom.Image} alt={kingdom.Name} />
+              <img src={kingdom.Image} alt={kingdom.Name} className="w-100" />
             </div>
             <div className="feed-kingdom__kingdom_btns">
-              <div className="feed-kingdom__kingdom__about_btn btn-primary-defautl">
-                <Link to={`/kingdom/${kingdom.Id}`}>
-                  <Button>Подробнее</Button>
-                </Link>
-              </div>
-              <div className="feed-kingdom__kingdom__delete_btn btn-primary-default">
-                <Button onClick={kingdomDeleteFunc}>Удалить</Button>
-              </div>
+              <Row>
+                <Col className="justify-content-between" style={{display: 'flex'}}>
+                  <Link 
+                  style={{width: '30%'}}
+                  to={`/kingdom/${kingdom.ID}`}>
+                    <Button
+                      style={{width: '100%'}}>
+                      Подробнее
+                    </Button>
+                  </Link>
+                  <Button 
+                    style={{width: '30%'}}
+                    onClick={kingdomDeleteFunc}>
+                    Удалить
+                  </Button>
+                </Col>
+              </Row>                
             </div>
-          </div>
+          </Col>
         ))}
-      </div>
-    );
+      </Row>
+    </Container>
+  );
 }
 
 export default KingdomItem;

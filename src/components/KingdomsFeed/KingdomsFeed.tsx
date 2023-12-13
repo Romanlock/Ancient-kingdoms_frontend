@@ -1,45 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import KingdomItem from '../KingdomItem/KingdomItem';
-import MyInput from '../UI/Input/MyInput';
 import { KingdomsApi } from '../../utils/api/KingdomsApi/KingdomsApi'
-import { Kingdom } from '../../dataStrucrures/KingdomInterfase';
+import { Kingdom } from '../../dataStrucrures/KingdomInterface';
+import { InputGroup, Form } from 'react-bootstrap';
+import { AuthorizationApi } from '../../utils/api/AuthorizationApi/AuthorizationApi';
 
 const KingdomsFeed: React.FC = () => {
+  const authorizationApi = new AuthorizationApi();
   const kingdomsApi = new KingdomsApi();
   const [kingdoms, setKingdoms] = useState<Kingdom[]>([]);
   const [searchKingdom, setSearchKingdom] = useState('');
 
   useEffect(() => {
-    const getKingdomsRequestParams = {
-      kingdomName: '',
-      rulerName: 'All',
-      state: '',
+    let kingdomName = searchKingdom ? searchKingdom : '';
+
+    const getKingdoms = async () => {
+      let data = await kingdomsApi.getKingdomsByName(kingdomName);
+      
+      const dataArray: Kingdom[] = [];
+      for (let i = 0; i < 10; i++) {
+        dataArray.push(data[0]);
+      }
+
+      setKingdoms(dataArray);
     }
 
-    getKingdomsRequestParams.kingdomName = searchKingdom ? searchKingdom : '';
+    getKingdoms();
 
-    kingdomsApi.getKingdoms(getKingdomsRequestParams)
-      .then((data: any) => {
-        setKingdoms(data);
-      })
-      .catch((error: any) => {
-        console.error('Ошибка при выполнении запроса getKingdoms:', error);
-        throw error;
-      });
+    // const checkLogin = async () => {
+    //   const data = await authorizationApi.checkLogin();
+    //   console.log(data);
+    // }
+
+    // checkLogin();
+
   }, [searchKingdom]);
 
   return (
     <div className="page">
-      <header style={{ textAlign: 'center', fontSize: '40px', marginBottom: '30px', fontFamily: 'Arial, Helvetica, sans-serif' }}>
-        Топ 6 княжеств Древних Русов
-      </header>
       <div className="content">
-        <MyInput
+        <InputGroup className="mb-3">
+        <Form.Control
+          placeholder="Введите название королевства"
+          aria-label="Username"
           value={searchKingdom}
           onChange={e => setSearchKingdom(e.target.value)}
-          type="text"
-          placeholder="Введите название королевства"
         />
+        </InputGroup>
         <KingdomItem kingdoms={kingdoms} />
       </div>
     </div>

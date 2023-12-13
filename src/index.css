@@ -1,11 +1,11 @@
 @import url(./assets/components/fonts/fonts.css);
 @import url(./components/KingdomsFeed/KingdomsFeed.css);
 
-#root {
-    /* display: grid;    */
+/* #root {
+    /* display: grid;    
     /* grid-template-areas: 
     "sidebar header"
-    "sidebar content"; */
+    "sidebar content"; 
     grid-template-rows: 77px 1fr;
     grid-template-columns: auto 1fr;
     width: 100%;
@@ -58,4 +58,4 @@
 #fullpage:empty {
     display: none;
 }
-
+ */
