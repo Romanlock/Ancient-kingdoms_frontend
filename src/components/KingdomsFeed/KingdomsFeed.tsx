@@ -39,7 +39,7 @@ const KingdomsFeed: React.FC = () => {
   return (
     <div className="page">
       <div className="content">
-        <InputGroup className="mb-3">
+        <InputGroup className="mt-5">
         <Form.Control
           placeholder="Введите название королевства"
           aria-label="Username"

@@ -1,5 +1,6 @@
 @import url(./assets/components/fonts/fonts.css);
 @import url(./components/KingdomsFeed/KingdomsFeed.css);
+@import url(./components/UI/Breadcrumbs/Breadcrumbs.css);
 
 /* #root {
     /* display: grid;    

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
 import { Kingdom } from "../../dataStrucrures/KingdomInterface";
 
@@ -27,12 +27,19 @@ const KingdomPage: React.FC = () => {
 
   return (
    <div className="kingdom-page">
-       <div className="kingdom">
-           <div className="kingdom__title">
-               <h2>{kingdom.Name}</h2>
-           </div>
+       <div className="kingdom" style={{ marginTop: '56px'}}>
+          <div className="kingdom__title">
+            <h2>{kingdom.Name}</h2>
+          </div>
+
+          <Form>
+            <Form.Group className="mb-3" controlId="kingdomArea">
+              <Form.Label>Площадь</Form.Label>
+              <Form.Control type="text" disabled = {true} value={kingdom.Area} />
+            </Form.Group>
+          </Form>
            <div className="kingdom__area">
-               <h2>{kingdom.Area}</h2>
+               <h2></h2>
            </div>
            <div className="kingdom__capital">
                <h2>{kingdom.Capital}</h2>
