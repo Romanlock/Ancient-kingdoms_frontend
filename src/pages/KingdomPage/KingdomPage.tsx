@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Button, Form, Container, Row, Image, Col } from 'react-bootstrap';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
-import { Kingdom } from "../../dataStrucrures/KingdomInterface";
+import { Kingdom } from "../../dataStructures/KingdomInterface";
 
 const KingdomPage: React.FC = () => {
   const kingdomsApi = new KingdomsApi();

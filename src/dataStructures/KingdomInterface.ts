@@ -1,5 +1,5 @@
 export interface Kingdom {
-  ID: number,
+  Id: number,
   Name: string,
   Area: number,
   Capital: string,

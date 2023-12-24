@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import KingdomsFeed from './components/KingdomsFeed/KingdomsFeed';
-import KingdomPage from './components/KingdomPage/KingdomPage';
+import KingdomsFeed from './pages/KingdomsFeed/KingdomsFeed';
+import KingdomPage from './pages/KingdomPage/KingdomPage';
 import NavbarUser from './components/Navbar/NavbarUser';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import KingdomItem from '../KingdomItem/KingdomItem';
+import KingdomItem from '../../components/KingdomItem/KingdomItem';
 import { KingdomsApi } from '../../utils/api/KingdomsApi/KingdomsApi'
-import { Kingdom } from '../../dataStrucrures/KingdomInterface';
+import { Kingdom } from '../../dataStructures/KingdomInterface';
 import { InputGroup, Form } from 'react-bootstrap';
 import { AuthorizationApi } from '../../utils/api/AuthorizationApi/AuthorizationApi';
 
@@ -17,12 +17,7 @@ const KingdomsFeed: React.FC = () => {
     const getKingdoms = async () => {
       let data = await kingdomsApi.getKingdomsByName(kingdomName);
       
-      const dataArray: Kingdom[] = [];
-      for (let i = 0; i < 10; i++) {
-        dataArray.push(data[0]);
-      }
-
-      setKingdoms(dataArray);
+      setKingdoms(data);
     }
 
     getKingdoms();
