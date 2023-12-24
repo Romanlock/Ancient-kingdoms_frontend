@@ -1,28 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { Button, Form, Container, Row, Image, Col } from 'react-bootstrap';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
-import { Kingdom } from "../../dataStructures/KingdomInterface";
+import { resetKingdom, setKingdom } from "../../stores/KingdomsSlice";
 
 const KingdomPage: React.FC = () => {
   const kingdomsApi = new KingdomsApi();
-  const [kingdom, setKingdom] = useState<Kingdom | null>(null);
   const { id } = useParams();
-
+  const dispatch = useDispatch();
+  const kingdom = useSelector((store: any) => {
+    return store.kingdom.kingdom;
+  });
+  
+  const [isLoaded, setIsLoaded] = useState(false); // новое состояние
+ 
   useEffect(() => {
-    const getKingdomInfo = async () => {
-      if (!id) {
-        return;
-      }
-      const kingdom = await kingdomsApi.getKingdomByID(+id);
-      setKingdom(kingdom);
+    async function getOneKingdom() {
+      const kingdomData = await kingdomsApi.getKingdomByID(+id!);
+      dispatch(setKingdom(kingdomData));
+      setIsLoaded(true); // устанавливаем состояние в true после загрузки данных
     }
-
-    getKingdomInfo();
-  }, [id]);
-
-  if (!kingdom) {
-      return; 
+    getOneKingdom();
+ 
+    return () => {
+        dispatch(resetKingdom());
+    };
+  }, [dispatch, id]);
+ 
+  if (!isLoaded) {
+    return null; // или <LoaderComponent />
   }
 
   return (

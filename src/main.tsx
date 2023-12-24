@@ -6,16 +6,20 @@ import NavbarUser from './components/Navbar/NavbarUser';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import store from './stores/store';
+import { Provider } from "react-redux";
  
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter basename="/">
-      <NavbarUser />
-      <Routes>
-        <Route path="/kingdom" element={<KingdomsFeed />} />
-        <Route path="/kingdom/:id" element={<KingdomPage />} />              
-      </Routes>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter basename="/">
+        <NavbarUser />
+        <Routes>
+          <Route path="/kingdom" element={<KingdomsFeed />} />
+          <Route path="/kingdom/:id" element={<KingdomPage />} />              
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>
  );
  

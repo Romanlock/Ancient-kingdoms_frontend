@@ -1,18 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col } from "react-bootstrap";
 import { Kingdom } from "../../dataStructures/KingdomInterface";
 
 interface Props {
-  kingdoms: Kingdom[];
+  kingdoms: Kingdom[],
+  addKingdomToApplication: Function
 }
 
-const KingdomItem: React.FC<Props> = ({kingdoms}) => {
+const KingdomItem: React.FC<Props> = ({kingdoms, addKingdomToApplication}) => {
+
+  const dispatch = useDispatch();
+  const { currentApplication } = useSelector((store: any) => store.application);
+
   const navigate = useNavigate();
 
-  const kingdomDeleteFunc = () => {
-    console.log('delete');
-  }
+  // useEffect(() => {
+
+  // })
 
   return (
     <Container className="feed-kingdoms">
@@ -34,7 +40,7 @@ const KingdomItem: React.FC<Props> = ({kingdoms}) => {
                   <Button 
                     onClick={e => {
                       e.stopPropagation();
-                      kingdomDeleteFunc();
+                      addKingdomToApplication(kingdom.Id);
                     }}>
                     Захватить
                   </Button>
