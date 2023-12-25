@@ -1,9 +1,9 @@
-import { Kingdom } from "../../../dataStructures/KingdomInterface";
+import { Kingdom } from "../../../Interfaces/dataStructures/KingdomInterface";
 
 export function mockedGetKingdoms() {
     const kingdoms: Kingdom[] = [
         {
-            ID: 0,
+            Id: 0,
             Name: 'Нет ответа от бэка',
             Area: 0,
             Capital: 'Нет ответа от бэка',
@@ -18,7 +18,7 @@ export function mockedGetKingdoms() {
 export function mockedGetKingdom() {
     const kingdom: Kingdom[] = [
         {
-            ID: 0,
+            Id: 0,
             Name: 'Нет ответа от бэка',
             Area: 0,
             Capital: 'Нет ответа от бэка',

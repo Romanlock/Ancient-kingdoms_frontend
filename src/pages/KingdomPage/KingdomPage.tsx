@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { Button, Form, Container, Row, Image, Col } from 'react-bootstrap';
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
-import { resetKingdom, setKingdom } from "../../stores/KingdomsSlice";
+import { resetKingdom, setKingdom } from "../../stores/KingdomStore";
 
 const KingdomPage: React.FC = () => {
   const kingdomsApi = new KingdomsApi();

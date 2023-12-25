@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { kingdomReducer } from './KingdomsSlice';
+import { kingdomReducer } from './KingdomStore';
 import { applicationReducer } from './ApplicationStore';
 
 const store = configureStore({ 

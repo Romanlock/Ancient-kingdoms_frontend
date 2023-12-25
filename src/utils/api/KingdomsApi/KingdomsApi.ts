@@ -1,6 +1,6 @@
 import { mockedGetKingdoms, mockedGetKingdom } from '../../serverMock/KingdomsMock/KingdomsMock';
 import axios from 'axios';
-import { Kingdom } from '../../../dataStructures/KingdomInterface';
+import { Kingdom } from '../../../Interfaces/dataStructures/KingdomInterface';
 
 export class KingdomsApi {
   private static instance: KingdomsApi;

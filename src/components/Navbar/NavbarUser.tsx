@@ -1,7 +1,7 @@
 import {Container, Nav, Navbar, NavDropdown, InputGroup, Form }from 'react-bootstrap';
 import Breadcrumbs from '../UI/Breadcrumbs/Breadcrumbs';
-function NavbarUser() {
 
+function NavbarUser() {
  return (
    <Navbar expand="lg" className="bg-body-tertiary d-flex justify-content-between" fixed='top'>
      <Breadcrumbs />
