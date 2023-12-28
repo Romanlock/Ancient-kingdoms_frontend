@@ -18,7 +18,7 @@ export const ApplicationSlice = createSlice({
   name: 'applications',
   initialState,
   reducers: {
-    SetApplications: (state, action : PayloadAction<Application[]>) => {
+    SetApplications: (state, action: PayloadAction<Application[]>) => {
       state.applications = action.payload;
       state.applicationsCount = action.payload.length;
     },
@@ -28,10 +28,12 @@ export const ApplicationSlice = createSlice({
       }
 
       state.currentApplication!.Id = action.payload.Id;
+      state.applicationsCount = 0;
     },
     AddKingdomToApplication: (state, action: PayloadAction<KingdomWithTerm>) => {
       if (state.currentApplication) {
         state.currentApplication.KingdomsWithTerm.push(action.payload);
+        state.applicationsCount += 1;
       }
     },
   }

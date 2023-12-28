@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { Button, Form, Container, Row, Image, Col } from 'react-bootstrap';
+
 import { KingdomsApi } from "../../utils/api/KingdomsApi/KingdomsApi";
 import { resetKingdom, setKingdom } from "../../stores/KingdomStore";
+import Loader from "../../components/UI/Loader/Loader";
 
 const KingdomPage: React.FC = () => {
   const kingdomsApi = new KingdomsApi();
@@ -19,7 +21,7 @@ const KingdomPage: React.FC = () => {
     async function getOneKingdom() {
       const kingdomData = await kingdomsApi.getKingdomByID(+id!);
       dispatch(setKingdom(kingdomData));
-      setIsLoaded(true); // устанавливаем состояние в true после загрузки данных
+      setIsLoaded(true);
     }
     getOneKingdom();
  
@@ -29,7 +31,7 @@ const KingdomPage: React.FC = () => {
   }, [dispatch, id]);
  
   if (!isLoaded) {
-    return null; // или <LoaderComponent />
+    return <Loader />;
   }
 
   return (

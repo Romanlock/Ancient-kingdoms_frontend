@@ -1,6 +1,7 @@
 import { mockedGetKingdoms, mockedGetKingdom } from '../../serverMock/KingdomsMock/KingdomsMock';
 import axios from 'axios';
 import { Kingdom } from '../../../Interfaces/dataStructures/KingdomInterface';
+import { ResponseDefault } from '../ResponseInterface';
 
 export class KingdomsApi {
   private static instance: KingdomsApi;
@@ -30,9 +31,10 @@ export class KingdomsApi {
       }
     })
       .then((res) => {
-        const response = res.data;
-        if (response.status === 'ok') {
-          return response.body;
+        const response: ResponseDefault = res.data;
+        console.log(response)
+        if (response.Status === 'ok') {
+          return response.Body;
         } else {
           mockedGetKingdoms();
         }
@@ -52,9 +54,9 @@ export class KingdomsApi {
       }
     })
       .then((res) => {
-        const response = res.data;
-        if (response.status === 'ok') {
-          return response.body;
+        const response: ResponseDefault = res.data;
+        if (response.Status === 'ok') {
+          return response.Body;
         } else {
           mockedGetKingdom();
         }

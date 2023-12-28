@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col } from "react-bootstrap";
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import ru from 'date-fns/locale/ru'; 
 import 'react-datepicker/dist/react-datepicker.css';
+
 import { PropsKingdomItemInterface } from "../../Interfaces/PropsInterfaces/PropsKingdomItemInterface";
 import { stopPropagation } from "../../utils/componentFunctions/StopPropagation";
 import { addKingdomToApplication } from "../../utils/componentFunctions/AddKingdomToApplication";
+
+
+registerLocale('ru', ru);
 
 const KingdomItem: React.FC<PropsKingdomItemInterface> = ({ kingdom }) => {
   const [from, setFrom] = useState('')
@@ -24,6 +29,15 @@ const KingdomItem: React.FC<PropsKingdomItemInterface> = ({ kingdom }) => {
     event.stopPropagation(); // Предотвращение всплытия события
     setDateTo(date);
     console.log(date)
+  };
+
+  // const [startDate, setStartDate] = useState(null);
+  // const [endDate, setEndDate] = useState(null);
+
+  const handleDateChange = (dates: [Date | null, Date | null]) => {
+    const [dateFrom, dateTo] = dates;
+    setDateFrom(dateFrom);
+    setDateTo(dateTo);
   };
 
 
@@ -46,9 +60,12 @@ const KingdomItem: React.FC<PropsKingdomItemInterface> = ({ kingdom }) => {
       <div className="feed-kingdom__kingdom_img p-1">
         <img src={kingdom.Image} alt={kingdom.Name} className="w-100" />
       </div>
-      <div className="feed-kingdom__kingdom_btns">
+      <div 
+        className="feed-kingdom__kingdom_btns"
+        onClick={(e) => e.stopPropagation()}
+      >
         <Row>
-          <Col>
+          {/* <Col xs={6}> */}
             <Button 
               onClick={e => {
                 e.stopPropagation();
@@ -56,20 +73,20 @@ const KingdomItem: React.FC<PropsKingdomItemInterface> = ({ kingdom }) => {
               }}>
               Захватить
             </Button>
-          </Col>
-        </Row>                
-      </div>
-      <div onClick={stopPropagation}>
-        <DatePicker
-          selected={dateFrom}
-          onChange={(date, event) => handleDateFromChange(date, event)}
-          dateFormat="dd/MM/yyyy"
-        />
-        <DatePicker
-          selected={dateTo}
-          onChange={(date, event) => handleDateToChange(date, event)}
-          dateFormat="dd/MM/yyyy"
-        />
+          </Row>    
+          <Row>
+            <DatePicker
+              placeholderText="Выберите сроки"
+              selected={dateFrom}
+              onChange={handleDateChange}
+              startDate={dateFrom}
+              endDate={dateTo}
+              selectsRange
+              dateFormat="dd/MM/yyyy"
+              locale={ru}
+            />
+          {/* </Col>         */}
+        </Row>    
       </div>
     </Col>
   );

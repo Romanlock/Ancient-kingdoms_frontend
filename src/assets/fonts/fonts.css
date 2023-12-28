@@ -1,6 +1,6 @@
 
 .text-h1-medium {
-    font-family: Nunito;
+    /* font-family: Nunito; */
     font-size: 39.06px;
     font-style: normal;
     font-weight: 400;
@@ -8,7 +8,7 @@
 }
 
 .text-h2-medium {
-    font-family: Nunito;
+    /* font-family: Nunito; */
     font-size: 32px;
     font-style: normal;
     font-weight: 400;
@@ -16,7 +16,7 @@
 }
 
 .text-base1-medium {
-    font-family: Nunito;
+    /* font-family: Nunito; */
     font-size: 25px;
     font-style: normal;
     font-weight: 400;
@@ -24,7 +24,7 @@
 }
 
 .text-base2-medium {
-    font-family: Nunito;
+    /* font-family: Nunito; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;

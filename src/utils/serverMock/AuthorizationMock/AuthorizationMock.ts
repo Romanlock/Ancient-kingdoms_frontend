@@ -1,4 +1,4 @@
-import { CheckLoginResponce } from "../../api/AuthorizationApi/AuthorizationResponceInterface";
+import { CheckLoginResponce } from "../../api/ResponseInterface";
 
 export function mockedCheckLoginResponce() {
   const CheckLoginResponce: CheckLoginResponce = {
