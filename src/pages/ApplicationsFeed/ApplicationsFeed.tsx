@@ -29,10 +29,12 @@ const ApplicationFeed: React.FC = () => {
         setIsLoaded(true);
       })
       .catch(error => {
+        console.log(error);
         setModalText(error);
         setModalShow(true);
         setIsLoaded(true);
       })
+
   }, [])
 
   if (!isLoaded) {
@@ -47,7 +49,7 @@ const ApplicationFeed: React.FC = () => {
           text={'Детали:'}
           error={modalText}
           show={true}
-          onHide={() => navigate('/kingdoms')}
+          onHide={() => navigate('/kingdom')}
         />
       ) : (
         <div className="applications-page__content">

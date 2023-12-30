@@ -13,7 +13,7 @@ import ApplicationPage from './pages/ApplicationPage/ApplicationPage';
 
 
 const App: React.FC = () => {
-  const { checkLogin } = useAuth();
+  const { isModerator, checkLogin } = useAuth();
 
   useEffect(() => { 
     checkLogin();
@@ -27,7 +27,7 @@ const App: React.FC = () => {
         <Route path="/kingdom" element={<KingdomsFeed />} />
         <Route path="/kingdom/:id" element={<KingdomPage />} />              
         <Route path="/application" element={<ApplicationFeed />} />
-        <Route path="/application/:id" element={<ApplicationPage />} />              
+        <Route path="/application/:id" element={<ApplicationPage  isModerator={isModerator}/>} />              
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
       </Routes>

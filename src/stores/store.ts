@@ -8,7 +8,13 @@ const store = configureStore({
     kingdom: kingdomReducer,
     application: applicationReducer,
     user: userReducer,
-  } 
+  } ,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['applications/AddKingdomToApplication'],
+      },
+    }),
 });
 
 export type AppDispatch = typeof store.dispatch;

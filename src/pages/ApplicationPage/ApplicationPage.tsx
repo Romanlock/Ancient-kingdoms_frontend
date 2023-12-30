@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import { Col, Row, Form } from "react-bootstrap";
+import { Col, Row, Form, Button } from "react-bootstrap";
 
 import { KingdomWithTerm } from "../../Interfaces/dataStructures/KingdomInterface";
 import { useApplication } from "../../hooks/useApplication";
 import MyModal from "../../components/UI/Modal/Modal";
 import Loader from "../../components/UI/Loader/Loader";
 import KingdomItem from "../../components/KingdomItem/KingdomItem";
+import ApplicationStatusSelector from "../../components/UI/Selector/ApplicationStatusSelector";
 
 
-const ApplicationPage: React.FC = () => {
+const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -21,7 +22,25 @@ const ApplicationPage: React.FC = () => {
 
   const { currentApplication, 
     setCurrentApplication,
-    deleteCurrentApplication } = useApplication();
+    deleteCurrentApplication,
+    updateApplicationStatus } = useApplication();
+
+  const sendApplication = () => {
+    updateApplicationStatus(currentApplication.Id, 'На рассмотрении')
+      .then(result => {
+        if (!result.result) {
+          setModalText(result.response?.Message!);
+          setModalShow(true);
+        }
+
+        navigate('/application')
+      })
+      .catch(error => {
+        setModalText(error);
+        setModalShow(true);
+      });
+
+  }
 
   useEffect(() => {
     if (!/^\d+$/.test(id!)) {
@@ -43,7 +62,7 @@ const ApplicationPage: React.FC = () => {
           setModalShow(true);
           setIsLoaded(true);
         });
-    }    
+    }
 
     return () => deleteCurrentApplication();
   }, [])
@@ -56,11 +75,11 @@ const ApplicationPage: React.FC = () => {
     <div className="application-page">
       { modalShow ? (
         <MyModal 
-        title={'Не найдено княжество'}
+        title={'Не найдена запись'}
         text={'Детали ошибки:'}
         error={modalText}
         show={true}
-        onHide={() => { navigate('/kingdom') }}
+        onHide={() => { navigate('/application') }}
       />
       ) : (
         <div>
@@ -75,7 +94,8 @@ const ApplicationPage: React.FC = () => {
               </Form.Label>
               <Col className="applications-feed__textcontent">
                 <Form.Control className="text-base1-medium"
-                plaintext readOnly defaultValue={currentApplication.Ruler} />
+                plaintext readOnly={ currentApplication.State === 'В разработке' ? false : true}
+                defaultValue={currentApplication.Ruler} />
               </Col>
             </Form.Group>
             <Form.Group as={Col} xs={4} sm={4} md={4} lg={4} 
@@ -84,8 +104,12 @@ const ApplicationPage: React.FC = () => {
                 Статус записи
               </Form.Label>
               <Col className="applications-feed__textcontent">
-                <Form.Control className="text-base1-medium"
-                plaintext readOnly defaultValue={currentApplication.State} />
+                { isModerator ? (
+                  <ApplicationStatusSelector />
+                ) : (
+                  <Form.Control className="text-base1-medium"
+                  plaintext readOnly defaultValue={currentApplication.State} />
+                ) }
               </Col>
               <Form.Label column>
                 Проверка
@@ -140,6 +164,9 @@ const ApplicationPage: React.FC = () => {
               />              
             ))}
           </Row>
+          <Button onClick={() => sendApplication()}>
+            Отправить
+          </Button>
         </div>
       )}
     </div>

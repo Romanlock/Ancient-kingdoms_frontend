@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Application } from "../../../Interfaces/dataStructures/ApplicationInterface";
-import { ApplicationStatusRequest } from "./ApplicationRequestInterfaces";
+import { ApplicationStatusRequest, 
+  AddKingdomToApplicationRequest,
+  DeleteKingdomFromApplicationRequest } from "./ApplicationRequestInterfaces";
 import { ResponseDefault } from "../ResponseInterface";
 
 export class ApplicationApi {
@@ -18,6 +20,8 @@ export class ApplicationApi {
       { name: 'getApplicationsById', url: '/api/applications' },
       { name: 'getApplicationWithKingdoms', url: '/api/application/with_kingdoms' },
       { name: 'updateApplicationStatus', url: '/api/application/status' },
+      { name: 'addKingdomToApplication', url: '/api/application/add_kingdom' },
+      { name: 'deleteKingdomFromApplication', url: '/api/application/delete_kingdom' },
     ];
   }
 
@@ -95,10 +99,72 @@ export class ApplicationApi {
       body, 
       {
         headers,
-        params: {
-          'Id': applicationId,
-        }
       },
+      )
+        .then((res) => {
+          return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
+  addKingdomToApplication = async (applicationId: Number, dateFrom: Date,
+    dateTo: Date, kingdomId: Number): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'addKingdomToApplication');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для addKingdomToApplication');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    const body: AddKingdomToApplicationRequest = {
+      ApplicationId: applicationId,
+      KingdomId: kingdomId,
+      From: dateFrom,
+      To: dateTo,
+    }
+
+    return axios.put(
+      configItem.url,
+      body, 
+      {
+        headers,
+      },
+      )
+        .then((res) => {
+          return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
+  deleteKingdomFromApplication = async (kingdomId: Number, 
+    applicationId: Number): Promise<ResponseDefault> => {
+      
+    const configItem = this.config.find((item) => item.name === 'deleteKingdomFromApplication');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для deleteKingdomFromApplication');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    const body: DeleteKingdomFromApplicationRequest = {
+      ApplicationId: applicationId,
+      KingdomId: kingdomId,
+    }
+
+    return axios.delete(
+      configItem.url,
+      {
+        data: body,
+        headers,
+      }
       )
         .then((res) => {
           return  res.data;
