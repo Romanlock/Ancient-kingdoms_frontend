@@ -15,17 +15,17 @@ export const kingdomSlice = createSlice({
   name: 'kingdom',
   initialState,
   reducers: {
-    setKingdoms: (state, action: PayloadAction<Kingdom[]>) => {
+    SetKingdoms: (state, action: PayloadAction<Kingdom[]>) => {
       state.kingdoms = action.payload;
     },
-    setKingdom: (state, action: PayloadAction<Kingdom>) => {
+    SetKingdom: (state, action: PayloadAction<Kingdom>) => {
       state.kingdom = action.payload;
     },
-    resetKingdom: (state) => {
+    DeleteKingdom: (state) => {
       state.kingdom = null;
     },
   },
 });
 
-export const { setKingdoms, setKingdom, resetKingdom } = kingdomSlice.actions;
+export const { SetKingdoms, SetKingdom, DeleteKingdom } = kingdomSlice.actions;
 export const kingdomReducer = kingdomSlice.reducer;

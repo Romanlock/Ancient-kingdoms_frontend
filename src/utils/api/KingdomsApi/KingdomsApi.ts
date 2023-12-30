@@ -1,7 +1,7 @@
-import { mockedGetKingdoms, mockedGetKingdom } from '../../serverMock/KingdomsMock/KingdomsMock';
 import axios from 'axios';
-import { Kingdom } from '../../../Interfaces/dataStructures/KingdomInterface';
+
 import { ResponseDefault } from '../ResponseInterface';
+
 
 export class KingdomsApi {
   private static instance: KingdomsApi;
@@ -15,52 +15,58 @@ export class KingdomsApi {
     KingdomsApi.instance = this;
     this.config = [
       { name: 'getKingdomsByName', url: '/api/kingdoms' },
-      { name: 'getKingdomByID', url: '/api/kingdom' },
+      { name: 'getKingdomById', url: '/api/kingdom' },
     ];
   }
 
-  getKingdomsByName = async (kingdomName: string): Promise<Kingdom[]> => {
+  getKingdomsByName = async (kingdomName: string): Promise<ResponseDefault> => {
     const configItem = this.config.find((item) => item.name === 'getKingdomsByName');
     if (!configItem) {
       throw new Error('Не найдена конфигурация для getKingdoms');
     }
 
-    return axios.get(configItem.url, {
-      params: {
-        'kingdom_name': kingdomName,
-      }
-    })
-      .then((res) => {
-        const response: ResponseDefault = res.data;
-        console.log(response)
-        if (response.Status === 'ok') {
-          return response.Body;
-        } else {
-          mockedGetKingdoms();
-        }
-      })
-      .catch(() => mockedGetKingdoms());
-  }
-
-  getKingdomByID = async (id: Number): Promise<Kingdom> => {
-    const configItem = this.config.find((item) => item.name === 'getKingdomByID');
-    if (!configItem) {
-      throw new Error('Не найдена конфигурация для getKingdomByID');
+    const headers = {
+      credenlials: 'include',
     }
 
-    return axios.get(configItem.url, {
-      params: {
-        'id': id,
-      }
-    })
-      .then((res) => {
-        const response: ResponseDefault = res.data;
-        if (response.Status === 'ok') {
-          return response.Body;
-        } else {
-          mockedGetKingdom();
+    return axios.get(configItem.url, 
+      {
+        headers,
+        params: {
+          'Kingdom_name': kingdomName,
         }
       })
-      .catch(() => mockedGetKingdoms());
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
+  getKingdomById = async (id: Number): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'getKingdomById');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для getKingdomById');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    return axios.get(configItem.url, 
+      {
+        headers,
+        params: {
+          'Id': id,
+        }
+      },
+      )
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
   }
 }

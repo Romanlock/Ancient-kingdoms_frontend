@@ -1,42 +1,58 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {Container, Nav, Navbar, NavDropdown, InputGroup, Form }from 'react-bootstrap';
 
 import Breadcrumbs from '../UI/Breadcrumbs/Breadcrumbs';
 import { useAuth } from '../../hooks/useAuth';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useApplication } from '../../hooks/useApplication';
+
 
 function NavbarUser() {
-  const { user, isAuthorized, isModerator, logout } = useAuth()
   const navigate = useNavigate()
 
+  const { user, isAuthorized, isModerator, logout } = useAuth()
+  const { 
+    applicationsCount, 
+    applicationToCreateKingdomsCount, 
+    setApplications } = useApplication();
+
   useEffect(() => {
-    
+    setApplications(null);  
   }, [user])
 
  return (
   <div>
     <Navbar expand="lg" className="bg-body-tertiary d-flex justify-content-between" fixed='top'>
       <Breadcrumbs />
-      {/* <InputGroup className="mb-3">
-        <Form.Control
-          placeholder="Введите название королевства"
-          aria-label="Username"
-          value={searchKingdom}
-          onChange={e => setSearchKingdom(e.target.value)}
-        />
-      </InputGroup> */}
       <Container style={{ width: 'min-content', marginRight: '5%' }}>
-        <Navbar.Brand onClick={() => navigate('/kingdom')}>ARK</Navbar.Brand>
+        <Navbar.Brand 
+        style={{cursor: 'pointer'}}
+        onClick={() => navigate('/kingdom')}>
+          ARK
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         { isAuthorized ? (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link style={{ whiteSpace: 'nowrap' }}>Мои походы</Nav.Link>
-              <Nav.Link style={{ whiteSpace: 'nowrap' }}>Список походов</Nav.Link>
+              <Nav.Link style={{ whiteSpace: 'nowrap' }}>
+                Создать запись { applicationToCreateKingdomsCount > 0 ? 
+                applicationToCreateKingdomsCount : 
+                <div /> }
+              </Nav.Link>
+              <Nav.Link style={{ whiteSpace: 'nowrap' }}
+              onClick={() => navigate('/application')}>
+                Мои записи { applicationsCount > 0 ? 
+                applicationsCount : 
+                <div /> }
+              </Nav.Link>
               { isModerator ? (
                 <div>
-                  <Nav.Link style={{ whiteSpace: 'nowrap' }}>Управлять княжествами</Nav.Link>
-                  <Nav.Link style={{ whiteSpace: 'nowrap' }}>Создать княжество</Nav.Link>
+                  <Nav.Link style={{ whiteSpace: 'nowrap' }}>
+                    Изменить княжества
+                  </Nav.Link>
+                  <Nav.Link style={{ whiteSpace: 'nowrap' }}>
+                    Добавить княжество
+                  </Nav.Link>
                 </div>
 
               ) :(

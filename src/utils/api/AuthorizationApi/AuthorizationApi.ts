@@ -63,13 +63,12 @@ export class AuthorizationApi {
       body,
       { headers },
       )
-      .then((res) => {
-        const response = res.data;
-        return response;
-      })
-      .catch((error) => {
-        return error.response.data;
-      });
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
   }
 
   signup = async (name: string, password: string): Promise<ResponseDefault> => {
@@ -92,13 +91,12 @@ export class AuthorizationApi {
       body,
       { headers },
       )
-      .then((res) => {
-        const response = res.data;
-        return response;
-      })
-      .catch((error) => {
-        return error.response.data;
-      });
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
   }
 
   logout = async (): Promise<ResponseDefault> => {
@@ -115,12 +113,11 @@ export class AuthorizationApi {
       configItem.url,
       { headers },
       )
-      .then((res) => {
-        const response = res.data;
-        return response;
-      })
-      .catch((error) => {
-        return error.response.data;
-      });
+        .then((res) => {
+          return res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
   }
 }

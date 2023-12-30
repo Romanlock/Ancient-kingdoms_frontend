@@ -1,61 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { InputGroup, Form, Row, Container, Col, Button } from 'react-bootstrap';
 
 import KingdomItem from '../../components/KingdomItem/KingdomItem';
-import { KingdomsApi } from '../../utils/api/KingdomsApi/KingdomsApi'
-import { setKingdoms } from '../../stores/KingdomStore';
 import { Kingdom } from "../../Interfaces/dataStructures/KingdomInterface";
 import Loader from '../../components/UI/Loader/Loader';
+import { useKingdom } from '../../hooks/useKingdom';
+import MyModal from '../../components/UI/Modal/Modal';
 
 
 const KingdomsFeed: React.FC = () => {
-  const [isLoaded, setIsLoaded] = useState(false); // новое состояние
-  const kingdomsApi = new KingdomsApi();
-  const dispatch = useDispatch();
+  const [modalShow, setModalShow] = useState(false);
+  const [modalText, setModalText] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false); 
   const [searchText, setSearchText] = useState('');
 
-  const { kingdoms } = useSelector((store: any) => store.kingdom);
+  const { kingdoms, setKingdoms } = useKingdom();
 
   useEffect(() => {
-    async function getAllKingdoms() {
-      const loadedKingdoms = await kingdomsApi.getKingdomsByName(searchText);
-      dispatch(setKingdoms(loadedKingdoms));
-      setIsLoaded(true); // устанавливаем состояние в true после загрузки данных
-    }
-    getAllKingdoms();
-  }, [dispatch, searchText]);
+    setKingdoms(searchText)
+      .then(result => {
+        if (!result.result) {
+          setModalText(result.response?.Message!);
+          setModalShow(true);
+        }
+        
+        setIsLoaded(true);
+      })
+      .catch(error => {
+        setModalText(error);
+        setModalShow(true);
+        setIsLoaded(true);
+      });
+          
 
-  if (!isLoaded) { // Проверяем и isLoaded и наличие данных kingdoms
-    if (!isLoaded) {
-      return <Loader />;
-    }
+  }, [searchText]);
+
+  if (!isLoaded) {
+    return <Loader />;
   }
 
   return (
-    <div className="page">
-      <div className="content">
-        <InputGroup className="mt-5">
-        <Form.Control
-          placeholder="Введите название королевства"
-          aria-label="Username"
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
+    <div className="kingdom-page">
+      { modalShow ? (
+        <MyModal 
+          title={'Не найдены княжества'}
+          text={'Детали ошибки:'}
+          error={modalText}
+          show={true}
+          onHide={() => window.location.reload()}
         />
-        </InputGroup>
+      ) : (
+        <div className="page">
+          <div className="content">
+            <InputGroup className="mt-5">
+            <Form.Control
+              placeholder="Введите название королевства"
+              aria-label="Username"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            />
+            </InputGroup>
 
-        <Container className="feed-kingdoms">
-          <Row style={{justifyContent: 'center'}}>
-            {kingdoms?.map((kingdom: Kingdom) => (
-              <KingdomItem 
-              key={kingdom.Id}
-              kingdom={kingdom}
-              />              
-            ))}
-          </Row>
-        </Container>
-      </div>
-    </div>
+            <Container className="feed-kingdoms">
+              <Row style={{justifyContent: 'center'}}>
+                {kingdoms?.map((kingdom: Kingdom) => (
+                  <KingdomItem 
+                  key={kingdom.Id}
+                  kingdom={kingdom}
+                  inApplication={false}
+                  applicationDateFrom={null}
+                  applicationDateTo={null}
+                  disabled={false}
+                  />              
+                ))}
+              </Row>
+            </Container>
+          </div>
+        </div>
+      )}
+    </div>   
   );
 }
 

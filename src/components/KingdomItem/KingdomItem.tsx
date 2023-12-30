@@ -5,15 +5,16 @@ import { Button, Container, Row, Col } from "react-bootstrap";
 import DatePicker, { registerLocale } from 'react-datepicker';
 import ru from 'date-fns/locale/ru'; 
 import 'react-datepicker/dist/react-datepicker.css';
-
-import { PropsKingdomItemInterface } from "../../Interfaces/PropsInterfaces/PropsKingdomItemInterface";
-import { stopPropagation } from "../../utils/componentFunctions/StopPropagation";
 import { addKingdomToApplication } from "../../utils/componentFunctions/AddKingdomToApplication";
+import { Kingdom } from "../../Interfaces/dataStructures/KingdomInterface";
+import { parseISO } from "date-fns";
 
 
 registerLocale('ru', ru);
 
-const KingdomItem: React.FC<PropsKingdomItemInterface> = ({ kingdom }) => {
+const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled: boolean,
+  applicationDateFrom: Date | null, applicationDateTo: Date | null }> = 
+  ({ kingdom, inApplication, applicationDateFrom, applicationDateTo, disabled }) => {
   const [from, setFrom] = useState('')
 
   const [dateFrom, setDateFrom] = useState<Date | null>(null);
@@ -64,29 +65,76 @@ const KingdomItem: React.FC<PropsKingdomItemInterface> = ({ kingdom }) => {
         className="feed-kingdom__kingdom_btns"
         onClick={(e) => e.stopPropagation()}
       >
-        <Row>
-          {/* <Col xs={6}> */}
-            <Button 
-              onClick={e => {
-                e.stopPropagation();
-                addKingdomToApplication(dateFrom, dateTo, kingdom);
-              }}>
-              Захватить
-            </Button>
-          </Row>    
-          <Row>
-            <DatePicker
-              placeholderText="Выберите сроки"
-              selected={dateFrom}
-              onChange={handleDateChange}
-              startDate={dateFrom}
-              endDate={dateTo}
-              selectsRange
-              dateFormat="dd/MM/yyyy"
-              locale={ru}
-            />
-          {/* </Col>         */}
-        </Row>    
+        { !inApplication ? (  // case open from feed
+          <div>
+            <Row>
+              <Button 
+                onClick={e => {
+                  e.stopPropagation();
+                  addKingdomToApplication(dateFrom, dateTo, kingdom);
+                }}>
+                Добавить в заявку
+              </Button>
+            </Row>
+            <Row>
+              <DatePicker
+                placeholderText="Выберите сроки"
+                selected={dateFrom}
+                onChange={handleDateChange}
+                startDate={dateFrom}
+                endDate={dateTo}
+                selectsRange
+                dateFormat="dd/MM/yyyy"
+                locale={ru}
+              />
+            </Row>    
+          </div>
+        ) : (  // case open from application
+          <div>
+            { disabled ? (  // case application sended
+              <Row>
+                <DatePicker
+                  placeholderText="Выберите сроки"
+                  selected={parseISO(applicationDateFrom!.toString())}
+                  onChange={() => {}}
+                  startDate={parseISO(applicationDateFrom!.toString())}
+                  endDate={parseISO(applicationDateTo!.toString())}
+                  disabled={true}
+                  selectsRange
+                  dateFormat="dd/MM/yyyy"
+                  locale={ru}
+                />
+             </Row>
+            ) : (  // case application can be modified
+              <div>
+                <Row>
+                  <Button 
+                    onClick={e => {
+                      e.stopPropagation();
+                      addKingdomToApplication(dateFrom, dateTo, kingdom);
+                    }}>
+                    Сохранить новые сроки
+                  </Button>
+                </Row>
+                <Row>
+                  <DatePicker
+                    placeholderText="Выберите сроки"
+                    selected={parseISO(applicationDateFrom!.toString())}
+                    onChange={() => {}}
+                    startDate={parseISO(applicationDateFrom!.toString())}
+                    endDate={parseISO(applicationDateTo!.toString())}
+                    disabled={true}
+                    selectsRange
+                    dateFormat="dd/MM/yyyy"
+                    locale={ru}
+                  />
+                </Row>
+              </div>    
+            ) }
+          </div>    
+        )}
+        
+        
       </div>
     </Col>
   );

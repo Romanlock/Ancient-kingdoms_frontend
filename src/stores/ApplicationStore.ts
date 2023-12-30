@@ -3,15 +3,19 @@ import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
 import { Kingdom, KingdomWithTerm } from "../Interfaces/dataStructures/KingdomInterface";
 
 interface ApplicationState {
-  applications: Application[],
-  currentApplication: Application | null,
+  applications: Application[],  // все заявки
+  currentApplication: Application | null,  // выбранная заявка (с княжествами)
+  applicationToCreate: Application | null,  // заявка-черновик
   applicationsCount: number,
+  applicationToCreateKingdomsCount: number
 }
 
 const initialState: ApplicationState = {
   applications: [],
   currentApplication: null,
+  applicationToCreate: null,
   applicationsCount: 0,
+  applicationToCreateKingdomsCount: 0
 }
 
 export const ApplicationSlice = createSlice({
@@ -22,14 +26,20 @@ export const ApplicationSlice = createSlice({
       state.applications = action.payload;
       state.applicationsCount = action.payload.length;
     },
-    CreateCurrentApplication: (state, action: PayloadAction<Application>) => {
-      if (state.currentApplication) {
-        return
-      }
-
-      state.currentApplication!.Id = action.payload.Id;
-      state.applicationsCount = 0;
+    SetCurrentApplication: (state, action: PayloadAction<Application | null>) => {
+      state.currentApplication = action.payload;
     },
+    DeleteCurrentApplication: (state) => {
+      state.currentApplication = null;
+    },
+    // CreateCurrentApplication: (state, action: PayloadAction<Application>) => {
+    //   if (state.currentApplication) {
+    //     return
+    //   }
+
+    //   state.currentApplication!.Id = action.payload.Id;
+    //   state.applicationsCount = 0;
+    // },
     AddKingdomToApplication: (state, action: PayloadAction<KingdomWithTerm>) => {
       if (state.currentApplication) {
         state.currentApplication.KingdomsWithTerm.push(action.payload);
@@ -42,6 +52,7 @@ export const ApplicationSlice = createSlice({
 export const applicationReducer = ApplicationSlice.reducer;
 export const { 
   SetApplications, 
-  CreateCurrentApplication, 
-  AddKingdomToApplication 
+  SetCurrentApplication, 
+  DeleteCurrentApplication,
+  AddKingdomToApplication,
 } = ApplicationSlice.actions;

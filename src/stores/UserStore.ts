@@ -23,7 +23,6 @@ export const UserSlice = createSlice({
       state.user = action.payload;
       state.isAuthorized = state.user ? true : false;
       state.isModerator = state.isAuthorized && state.user!.Role > 1 ? true : false;
-      console.log(state.user)
     },
     DeleteUser: (state) => {
       state.user = null;

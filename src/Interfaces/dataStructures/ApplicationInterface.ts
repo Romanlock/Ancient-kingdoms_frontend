@@ -3,7 +3,7 @@ import { KingdomWithTerm } from "./KingdomInterface";
 
 export interface Application {
   Id: number | null,
-  State: string,
+  State: string, 
   DateCreate: Date,
   DateSend: Date,
   DateComplete: Date,
