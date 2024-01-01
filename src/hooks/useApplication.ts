@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useCallback } from "react";
 
 import { SetApplications, 
   SetApplicationToCreate,
@@ -12,7 +13,6 @@ import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
 import { KingdomWithTerm, Kingdom } from "../Interfaces/dataStructures/KingdomInterface";
 import { ApplicationApi } from "../utils/api/ApplicationApi/ApplicationApi";
 import { ResponseDefault } from "../utils/api/ResponseInterface";
-import { User } from "../Interfaces/dataStructures/UserInterface";
 
 
 export function useApplication() {
@@ -40,11 +40,20 @@ export function useApplication() {
     
         if (inDevelopment) {
           return setApplicationToCreate(inDevelopment.Id!);
+        } else {
+          const res = await createApplication();
+
+          return res;
         }
 
         return { result: true, response }
       } else if (response.Status === 'error') {  // case error
         dispatch(SetApplications([]));
+
+        const res = await createApplication();
+        if (!res.result) {
+          return res;
+        }
 
         return { result: false, response }
       } else {  // case no connect to server
@@ -163,18 +172,45 @@ export function useApplication() {
     }
   }
 
-  const deleteCurrentApplication = () => {
+  const deleteCurrentApplication = () => {    //unused
     dispatch(DeleteCurrentApplication());
   }
 
-  const deleteApplicationToCreate = () => {
+  const deleteApplicationToCreate = () => {   // unused
     dispatch(DeleteApplicationToCreate());
   }
 
-  const addKingdomToApplication = 
-    async (dateFrom: Date, dateTo: Date, kingdom: Kingdom) => {
+  const addKingdomToApplication = async (dateFrom: Date, dateTo: Date, kingdom: Kingdom) => {
+    if (!applicationToCreate) {
+      const response: ResponseDefault = {
+        Code: 400,
+        Status: 'error',
+        Message: 'Еще нет активных записей',
+        Body: null,
+      };
+      
+      return { result: false, response };
+      
+      const res = await createApplication();
+      if (!res.result) {
+        return res;
+      }
 
-    console.log(kingdom)
+      // return await addKingdomToApplication(dateFrom, dateTo, kingdom);
+    }
+
+    for (const kingdomWT of applicationToCreate?.KingdomsWithTerm || []) {
+      if (kingdomWT.Kingdom.Name === kingdom.Name) {
+        const response: ResponseDefault = {
+          Code: 400,
+          Status: 'error',
+          Message: 'Это княжество уже добавлено в запись',
+          Body: null,
+        };
+        
+        return { result: false, response };
+      }
+    }
       
     try {
       const response = await applicationsApi.addKingdomToApplication(applicationToCreate.Id,
@@ -185,7 +221,7 @@ export function useApplication() {
           From: dateFrom,
           To: dateTo,
         }
-        console.log(kingdomWithTerm)
+
         dispatch(AddKingdomToApplication(kingdomWithTerm));
 
         return { result: true, response }
@@ -200,7 +236,7 @@ export function useApplication() {
           Body: null,
         }
         
-        return { result: false, response};
+        return { result: false, response };
       } 
     } catch (error: any) {
       console.log(error)
@@ -283,6 +319,91 @@ export function useApplication() {
     }
   }
 
+  const createApplication = async () => {
+    try {
+      const response = await applicationsApi.createApplication();
+      if (response.Status === 'ok') {   // case successful
+        const applicationToCreate: Application = response.Body;
+        dispatch(SetApplicationToCreate(applicationToCreate));
+
+        return { result: true, response }
+      } else if (response.Status === 'error') {  // case error
+
+        return { result: false, response }
+      } else {  // case no connect to server
+        const response: ResponseDefault = {
+          Code: 503,
+          Status: 'error',
+          Message: 'Нет связи с сервером',
+          Body: null,
+        }
+        
+        return { result: false, response};
+      } 
+    } catch (error: any) {
+      console.log(error)
+      const response: ResponseDefault = {
+        Code: 418,
+        Status: 'undefined error',
+        Message: error,
+        Body: null,
+      }
+
+      return { result: false, response };
+    }
+  }
+
+  const debounce = (func: any, delay: number) => {
+    let timeoutId: any;
+    return function (...args: any[]): Promise<{ result: boolean; response: ResponseDefault; }> {
+      return new Promise((resolve, reject) => {
+        const executeFunction = async () => {
+          try {
+            const result = await func(...args);
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        };
+  
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+  
+        timeoutId = setTimeout(executeFunction, delay);
+      });
+    };
+  };  
+
+  const debounceTime = 1000;
+
+  const debouncedSetApplications = useCallback(debounce(setApplications, debounceTime), [setApplications]);
+  const debouncedSetCurrentApplication = useCallback(debounce(setCurrentApplication, debounceTime), [setCurrentApplication]);
+  const debouncedSetApplicationToCreate = useCallback(debounce(setApplicationToCreate, debounceTime), [setApplicationToCreate]);
+  const debouncedDeleteCurrentApplication = useCallback(debounce(deleteCurrentApplication, debounceTime), [deleteCurrentApplication]);
+  const debouncedDeleteApplicationToCreate = useCallback(debounce(deleteApplicationToCreate, debounceTime), [deleteApplicationToCreate]);
+  const debouncedAddKingdomToApplication = useCallback(debounce(addKingdomToApplication, debounceTime), [addKingdomToApplication]);
+  const debouncedDeleteKingdomFromApplication = useCallback(debounce(deleteKingdomFromApplication, debounceTime), [deleteKingdomFromApplication]);
+  const debouncedUpdateApplicationStatus = useCallback(debounce(updateApplicationStatus, debounceTime), [updateApplicationStatus]);
+  const debouncedCreateApplication = useCallback(debounce(createApplication, debounceTime), [createApplication]);
+
+  return {
+    applications,
+    currentApplication,
+    applicationToCreate,
+    applicationsCount,
+    applicationToCreateKingdomsCount,
+    setApplications: debouncedSetApplications,
+    setCurrentApplication: debouncedSetCurrentApplication,
+    setApplicationToCreate: debouncedSetApplicationToCreate,
+    deleteCurrentApplication: debouncedDeleteCurrentApplication,
+    deleteApplicationToCreate: debouncedDeleteApplicationToCreate,
+    addKingdomToApplication: debouncedAddKingdomToApplication,
+    deleteKingdomFromApplication: debouncedDeleteKingdomFromApplication,
+    updateApplicationStatus: debouncedUpdateApplicationStatus,
+    createApplication: debouncedCreateApplication,
+  };
+
   return {
     applications,
     currentApplication,
@@ -290,12 +411,13 @@ export function useApplication() {
     applicationsCount,
     applicationToCreateKingdomsCount,
     setApplications,
-    setApplicationToCreate,
     setCurrentApplication,
+    setApplicationToCreate,
     deleteCurrentApplication,
-    addKingdomToApplication,
     deleteApplicationToCreate,
+    addKingdomToApplication,
     deleteKingdomFromApplication,
     updateApplicationStatus,
-  }
+    createApplication,
+  };
 }

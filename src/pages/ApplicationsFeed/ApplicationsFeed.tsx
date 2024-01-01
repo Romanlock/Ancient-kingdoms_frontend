@@ -10,9 +10,15 @@ import ApplicationItem from "../../components/ApplicationItem/ApplicationItem";
 
 
 const ApplicationFeed: React.FC = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
   const [modalText, setModalText] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalVariant, setModalVariant] = useState('');
+  const [modalCanselText, setModalCanselText] = useState('');
+  const [modalSaveText, setModalSaveText] = useState('');
+
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,16 +28,28 @@ const ApplicationFeed: React.FC = () => {
     setApplications(null)
       .then(result => {
         if (!result.result) {
-          setModalText(result.response?.Message);
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки:');
+          setModalError(result.response?.Message!);
+          setModalVariant('');
+          setModalCanselText('Закрыть');
           setModalShow(true);
+
+          setIsLoaded(true);
+
+          return;
         }
 
         setIsLoaded(true);
       })
       .catch(error => {
-        console.log(error);
-        setModalText(error);
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки:');
+        setModalError(error);
+        setModalVariant('');
+        setModalCanselText('Закрыть');
         setModalShow(true);
+
         setIsLoaded(true);
       })
 
@@ -41,32 +59,37 @@ const ApplicationFeed: React.FC = () => {
     return <Loader />
   }
 
+  if (modalShow) {
+    return (
+      <MyModal 
+        title={modalTitle}
+        text={modalText}
+        error={modalError}
+        show={modalShow}
+        variant={modalVariant}
+        canselText={modalCanselText}
+        saveText={modalSaveText}
+        onHide={() => navigate('/kingdom')}
+      />
+    );
+  }
+
   return (
     <div className="applications-page">
-      { modalShow ? (
-        <MyModal
-          title={'Не найдены записи'}
-          text={'Детали:'}
-          error={modalText}
-          show={true}
-          onHide={() => navigate('/kingdom')}
-        />
-      ) : (
-        <div className="applications-page__content">
-          <Container>
-            <Col className="applications-feed">
-              {applications?.map((application: Application) => (
-                <ApplicationItem
-                key={application.Id}
-                application={application}
-                />
-              ))}
-            </Col>
-          </Container>
-        </div>
-      )}
+      <div className="applications-page__content">
+        <Container>
+          <Col className="applications-feed">
+            {applications?.map((application: Application) => (
+              <ApplicationItem
+              key={application.Id}
+              application={application}
+              />
+            ))}
+          </Col>
+        </Container>
+      </div>
     </div>
-  )
+  );
 }
 
 export default ApplicationFeed;

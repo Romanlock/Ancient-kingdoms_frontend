@@ -14,13 +14,18 @@ const SignupPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
+
   const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
   const [modalText, setModalText] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalVariant, setModalVariant] = useState('');
+  const [modalCanselText, setModalCanselText] = useState('');
+  const [modalSaveText, setModalSaveText] = useState('');
 
   const navigate = useNavigate();
 
   const { isAuthorized, signup } = useAuth();
-
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value)
@@ -48,21 +53,30 @@ const SignupPage: React.FC = () => {
 
   async function signupUser() {
     if (username.length < 8) {
+      setModalTitle('Ошибка');
       setModalText('Имя пользователя должно содержать не менее 8 символов');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
       
       return;
     }
 
     if (password.length < 8) {
-      setModalText('Пароль должен содержать не менее 8 символов');
+      setModalTitle('Ошибка');
+      setModalText('Пароль должен содержать не менее 8 символов')
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
 
       return;
     }
 
     if (password !== passwordRepeat) {
-      setModalText('Пароли не совпадают');
+      setModalTitle('Ошибка');
+      setModalText('Пароли не совпадают')
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
 
       return;
@@ -70,20 +84,40 @@ const SignupPage: React.FC = () => {
 
     const errorMessage = await signup(username, password)
     if (errorMessage) {
-      setModalText(errorMessage);
-      setModalShow(true);
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError(errorMessage);
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalShow(true);   
     }
+  }
+
+  if (modalShow) {
+    return (
+      <MyModal 
+        title={modalTitle}
+        text={modalText}
+        error={modalError}
+        show={modalShow}
+        variant={modalVariant}
+        canselText={modalCanselText}
+        saveText={modalSaveText}
+        onHide={() => {
+          setModalTitle('');
+          setModalText('');
+          setModalError('');
+          setModalVariant('');
+          setModalCanselText('');
+          setModalSaveText('');
+          setModalShow(false);
+        }}
+      />
+    );
   }
 
   return (
     <div className="signup_page">
-      <MyModal 
-        title={'Ошибка при регистрации'}
-        text={'Детали ошибки:'}
-        error={modalText}
-        show={modalShow}
-        onHide={() => { setModalShow(false) }}
-      />
       <Row>
         <Col xs={4} className="signup_page__signup">
           <Row className="signup_page__fields">

@@ -12,8 +12,14 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
   const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
   const [modalText, setModalText] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalVariant, setModalVariant] = useState('');
+  const [modalCanselText, setModalCanselText] = useState('');
+  const [modalSaveText, setModalSaveText] = useState('');
 
   const navigate = useNavigate();
 
@@ -38,14 +44,20 @@ const LoginPage: React.FC = () => {
 
   async function loginUser() {
     if (username.length < 8) {
+      setModalTitle('Ошибка');
       setModalText('Имя пользователя должно содержать не менее 8 символов');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
       
       return;
     }
 
     if (password.length < 8) {
-      setModalText('Пароль должен содержать не менее 8 символов');
+      setModalTitle('Ошибка');
+      setModalText('Пароль должен содержать не менее 8 символов')
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
 
       return;
@@ -53,20 +65,40 @@ const LoginPage: React.FC = () => {
 
     const errorMessage = await login(username, password)
     if (errorMessage) {
-      setModalText(errorMessage);
-      setModalShow(true);
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError(errorMessage);
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalShow(true);  
     }
+  }
+
+  if (modalShow) {
+    return (
+      <MyModal 
+        title={modalTitle}
+        text={modalText}
+        error={modalError}
+        show={modalShow}
+        variant={modalVariant}
+        canselText={modalCanselText}
+        saveText={modalSaveText}
+        onHide={() => {
+          setModalTitle('');
+          setModalText('');
+          setModalError('');
+          setModalVariant('');
+          setModalCanselText('');
+          setModalSaveText('');
+          setModalShow(false);
+        }}
+      />
+    );
   }
 
   return (
     <div className="login_page">
-      <MyModal 
-        title={'Ошибка при авторизации'}
-        text={'Детали ошибки:'}
-        error={modalText}
-        show={modalShow}
-        onHide={() => { setModalShow(false) }}
-      />
       <Row>
         <Col xs={4} className="login_page__login">
           <Row className="login_page__fields">

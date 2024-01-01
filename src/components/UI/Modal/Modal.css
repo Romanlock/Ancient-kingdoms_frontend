@@ -1,0 +1,6 @@
+
+.modal-2buttons__buttons {
+  justify-content: center;
+  display: flex;
+  gap: 2vw;
+}

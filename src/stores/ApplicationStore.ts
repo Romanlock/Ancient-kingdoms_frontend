@@ -30,8 +30,12 @@ export const ApplicationSlice = createSlice({
       state.applicationToCreate = action.payload;
       state.applicationToCreateKingdomsCount = action.payload.KingdomsWithTerm?.length ? 
         action.payload.KingdomsWithTerm.length : 0;
+
+      console.log(action.payload);
+      console.log(state.applicationToCreate);
     },
     DeleteApplicationToCreate: (state) => {
+      console.log('DeleteApplicationToCreate');
       state.applicationToCreate = null;
       state.applicationToCreateKingdomsCount = 0;
     },

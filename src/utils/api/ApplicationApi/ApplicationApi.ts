@@ -22,6 +22,7 @@ export class ApplicationApi {
       { name: 'updateApplicationStatus', url: '/api/application/status' },
       { name: 'addKingdomToApplication', url: '/api/application/add_kingdom' },
       { name: 'deleteKingdomFromApplication', url: '/api/application/delete_kingdom' },
+      { name: 'createApplication', url: '/api/application/create' },
     ];
   }
 
@@ -168,6 +169,30 @@ export class ApplicationApi {
       )
         .then((res) => {
           return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
+  createApplication = async (): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'createApplication');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для createApplication');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    return axios.get(
+      configItem.url, 
+      {
+        headers,
+      },
+      )
+        .then((res) => {
+          return res.data;
         })
         .catch((error) => {
           return error.response.data;

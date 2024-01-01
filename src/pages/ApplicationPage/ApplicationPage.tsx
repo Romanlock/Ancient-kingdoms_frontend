@@ -13,12 +13,17 @@ import ApplicationStatusSelector from "../../components/UI/Selector/ApplicationS
 const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   const { id } = useParams();
 
-  const navigate = useNavigate();
-
   const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
   const [modalText, setModalText] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalVariant, setModalVariant] = useState('');
+  const [modalCanselText, setModalCanselText] = useState('');
+  const [modalSaveText, setModalSaveText] = useState('');
+  
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const navigate = useNavigate();
 
   const { currentApplication, 
     setCurrentApplication,
@@ -29,37 +34,68 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
     updateApplicationStatus(currentApplication.Id, 'На рассмотрении')
       .then(result => {
         if (!result.result) {
-          setModalText(result.response?.Message!);
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки:');
+          setModalError(result.response?.Message!);
+          setModalVariant('');
+          setModalCanselText('Закрыть');
           setModalShow(true);
+
+          setIsLoaded(true);
+          
+          return;
         }
 
-        navigate('/application')
+        navigate('/application');
       })
       .catch(error => {
-        setModalText(error);
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки:');
+        setModalError(error);
+        setModalVariant('');
+        setModalCanselText('Закрыть');
         setModalShow(true);
-      });
 
+        setIsLoaded(true);
+      });
   }
 
   useEffect(() => {
     if (!/^\d+$/.test(id!)) {
-      setModalText('Неверный формат записи');
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Неверный формат записи');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
-      setIsLoaded(true)
+
+      setIsLoaded(true);
     } else {
       setCurrentApplication(+id!)
         .then(result => {
           if (!result.result) {
-            setModalText(result.response?.Message!);
+            setModalTitle('Ошибка');
+            setModalText('Детали ошибки')
+            setModalError(result.response?.Message!);
+            setModalCanselText('Закрыть');
+            setModalVariant('');
             setModalShow(true);
+
+            setIsLoaded(true);
+
+            return;
           }
           
           setIsLoaded(true);
         })
         .catch(error => {
-          setModalText(error);
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки:');
+          setModalError(error);
+          setModalVariant('');
+          setModalCanselText('Закрыть');
           setModalShow(true);
+
           setIsLoaded(true);
         });
     }
@@ -71,104 +107,115 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
     return <Loader />
   }
 
+  if (modalShow) {
+    return (
+      <MyModal 
+        title={modalTitle}
+        text={modalText}
+        error={modalError}
+        show={modalShow}
+        variant={modalVariant}
+        canselText={modalCanselText}
+        saveText={modalSaveText}
+        onHide={() => {
+          setModalTitle('');
+          setModalText('');
+          setModalError('');
+          setModalVariant('');
+          setModalCanselText('');
+          setModalSaveText('');
+          setModalShow(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="application-page">
-      { modalShow ? (
-        <MyModal 
-        title={'Не найдена запись'}
-        text={'Детали ошибки:'}
-        error={modalText}
-        show={true}
-        onHide={() => { navigate('/application') }}
-      />
-      ) : (
-        <div>
-          <Form as={Row} xs={12} sm={8} md={4} lg={3}
-          style={{ marginRight: 0 }}
-          className={``}
-          >
-            <Form.Group as={Col} xs={3} sm={3} md={3} lg={3} 
-            className="applications-feed__ruler">
-              <Form.Label column>
-                Правитель
-              </Form.Label>
-              <Col className="applications-feed__textcontent">
-                <Form.Control className="text-base1-medium"
-                plaintext readOnly={ currentApplication.State === 'В разработке' ? false : true}
-                defaultValue={currentApplication.Ruler} />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Col} xs={4} sm={4} md={4} lg={4} 
-            className="applications-feed__state_and_check">
-              <Form.Label column>
-                Статус записи
-              </Form.Label>
-              <Col className="applications-feed__textcontent">
-                { isModerator ? (
-                  <ApplicationStatusSelector />
-                ) : (
-                  <Form.Control className="text-base1-medium"
-                  plaintext readOnly defaultValue={currentApplication.State} />
-                ) }
-              </Col>
-              <Form.Label column>
-                Проверка
-              </Form.Label>
-              <Col className="applications-feed__textcontent">
-                <Form.Control className="text-base1-medium"
-                plaintext readOnly 
-                defaultValue={ currentApplication.Check ? 
-                'Заявка подтверждена' : 
-                'Заявка не подтверждена'} />
-              </Col>
-            </Form.Group>
-            <Form.Group as={Col} xs={5} sm={5} md={5} lg={5} 
-            className="applications-feed__dates">
-              <Form.Label column className="applications-feed__dates_create">
-                Дата создания
-              </Form.Label>
-              <Col className="applications-feed__textcontent">
-                <Form.Control className="text-base1-medium"
-                plaintext readOnly 
-                defaultValue={currentApplication.DateCreate.toString().split('T')[0]} />
-              </Col>
-              <Form.Label column className="applications-feed__dates_send">
-                Дата оформления
-              </Form.Label>
-              <Col className="applications-feed__textcontent">
-                <Form.Control className="text-base1-medium"
-                plaintext readOnly 
-                defaultValue={ currentApplication.DateSend.toString().split('T')[0] === '0001-01-01' ?
-                'Запись еще не отправлена' : currentApplication.DateSend.toString().split('T')[0] } />
-              </Col>
-              <Form.Label column className="applications-feed__dates_complete">
-                Дата принятия решения
-              </Form.Label>
-              <Col className="applications-feed__textcontent">
-                <Form.Control className="text-base1-medium"
-                plaintext readOnly 
-                defaultValue={ currentApplication.DateComplete.toString().split('T')[0] === '0001-01-01' ?
-                'Запись еще не проверена' : currentApplication.DateComplete.toString().split('T')[0] } />
-              </Col>
-            </Form.Group>
-          </Form>  
-          <Row style={{justifyContent: 'center', marginRight: 0}} >
-            {currentApplication.KingdomsWithTerm?.map((kingdomWithTerm: KingdomWithTerm) => (
-              <KingdomItem 
-              key={kingdomWithTerm.Kingdom.Id}
-              kingdom={kingdomWithTerm.Kingdom}
-              inApplication={true}
-              applicationDateFrom={kingdomWithTerm.From}
-              applicationDateTo={kingdomWithTerm.To}
-              disabled={ currentApplication.State === 'В разработке' ? false : true }
-              />              
-            ))}
-          </Row>
-          <Button onClick={() => sendApplication()}>
-            Отправить
-          </Button>
-        </div>
-      )}
+      <Form as={Row} xs={12} sm={8} md={4} lg={3}
+      style={{ marginRight: 0 }}
+      className={``}
+      >
+        <Form.Group as={Col} xs={3} sm={3} md={3} lg={3} 
+        className="applications-feed__ruler">
+          <Form.Label column>
+            Правитель
+          </Form.Label>
+          <Col className="applications-feed__textcontent">
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly={ currentApplication.State === 'В разработке' ? false : true}
+            defaultValue={currentApplication.Ruler} />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Col} xs={4} sm={4} md={4} lg={4} 
+        className="applications-feed__state_and_check">
+          <Form.Label column>
+            Статус записи
+          </Form.Label>
+          <Col className="applications-feed__textcontent">
+            { isModerator ? (
+              <ApplicationStatusSelector />
+            ) : (
+              <Form.Control className="text-base1-medium"
+              plaintext readOnly defaultValue={currentApplication.State} />
+            ) }
+          </Col>
+          <Form.Label column>
+            Проверка
+          </Form.Label>
+          <Col className="applications-feed__textcontent">
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly 
+            defaultValue={ currentApplication.Check ? 
+            'Заявка подтверждена' : 
+            'Заявка не подтверждена'} />
+          </Col>
+        </Form.Group>
+        <Form.Group as={Col} xs={5} sm={5} md={5} lg={5} 
+        className="applications-feed__dates">
+          <Form.Label column className="applications-feed__dates_create">
+            Дата создания
+          </Form.Label>
+          <Col className="applications-feed__textcontent">
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly 
+            defaultValue={currentApplication.DateCreate.toString().split('T')[0]} />
+          </Col>
+          <Form.Label column className="applications-feed__dates_send">
+            Дата оформления
+          </Form.Label>
+          <Col className="applications-feed__textcontent">
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly 
+            defaultValue={ currentApplication.DateSend.toString().split('T')[0] === '0001-01-01' ?
+            'Запись еще не отправлена' : currentApplication.DateSend.toString().split('T')[0] } />
+          </Col>
+          <Form.Label column className="applications-feed__dates_complete">
+            Дата принятия решения
+          </Form.Label>
+          <Col className="applications-feed__textcontent">
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly 
+            defaultValue={ currentApplication.DateComplete.toString().split('T')[0] === '0001-01-01' ?
+            'Запись еще не проверена' : currentApplication.DateComplete.toString().split('T')[0] } />
+          </Col>
+        </Form.Group>
+      </Form>  
+      <Row style={{justifyContent: 'center', marginRight: 0}} >
+        {currentApplication.KingdomsWithTerm?.map((kingdomWithTerm: KingdomWithTerm) => (
+          <KingdomItem 
+          key={kingdomWithTerm.Kingdom.Id}
+          kingdom={kingdomWithTerm.Kingdom}
+          inApplication={true}
+          applicationDateFrom={kingdomWithTerm.From}
+          applicationDateTo={kingdomWithTerm.To}
+          disabled={ currentApplication.State === 'В разработке' ? false : true }
+          />              
+        ))}
+      </Row>
+      <Button onClick={() => sendApplication()}>
+        Отправить
+      </Button>
     </div>
   )
 }

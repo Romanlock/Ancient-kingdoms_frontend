@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col } from "react-bootstrap";
 
@@ -11,7 +10,7 @@ import ru from 'date-fns/locale/ru';
 import { Kingdom } from "../../Interfaces/dataStructures/KingdomInterface";
 import { useApplication } from "../../hooks/useApplication";
 import MyModal from "../UI/Modal/Modal";
-import { ResponseDefault } from "../../utils/api/ResponseInterface";
+import { useAuth } from "../../hooks/useAuth";
 
 
 registerLocale('ru', ru);
@@ -20,33 +19,66 @@ registerLocale('ru', ru);
 const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled: boolean,
   applicationDateFrom: Date | null, applicationDateTo: Date | null }> = 
   ({ kingdom, inApplication, applicationDateFrom, applicationDateTo, disabled }) => {
-  const [from, setFrom] = useState('')
   const [dateFrom, setDateFrom] = useState<Date | null>(null);
   const [dateTo, setDateTo] = useState<Date | null>(null);
 
   const [modalShow, setModalShow] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
   const [modalText, setModalText] = useState('');
-  const [modalVariant, SetModalVariant] = useState('');
+  const [modalError, setModalError] = useState('');
+  const [modalVariant, setModalVariant] = useState('');
+  const [modalCanselText, setModalCanselText] = useState('');
+  const [modalSaveText, setModalSaveText] = useState('');
+  const [modalHandleSaveMode, setModalHandleSaveMode] = useState<Number | null>(null);
 
   const { addKingdomToApplication, deleteKingdomFromApplication } = useApplication();
 
+  const { isAuthorized } = useAuth();
+
+  const navigate = useNavigate();
+
   const checkAndAddKingdomToApplication = () => {
-    if (!dateFrom) {
-      setModalText('Выберите дату начала правления');
+    if (!isAuthorized) {
+      setModalTitle('Ошибка');
+      setModalText('Вы не авторизованы')
+      setModalError('Желаете авторизоваться?');
+      setModalCanselText('Нет');
+      setModalSaveText('Да');
+      setModalVariant('2buttons');
+      setModalHandleSaveMode(1);
       setModalShow(true);
+
+      return;
+    }
+
+    if (!dateFrom) {
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Выберите дату начала правления');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalShow(true);   
 
       return;
     }
 
     if (!dateTo) {
-      setModalText('Выберите дату окончания правления');
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Выберите дату окончания правления');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
-      
+
       return;
     }
 
     if (dateFrom >= dateTo) {
-      setModalText('Выберите корректные даты правления');
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Выберите корректные даты правления');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
       setModalShow(true);
       
       return;
@@ -54,21 +86,71 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
 
     addKingdomToApplication(dateFrom, dateTo, kingdom)
       .then(result => {
+        console.log(result)
         if (!result.result) {
-          setModalText(result.response?.Message!);
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalError(result.response?.Message!);
+          setModalCanselText('Закрыть');
+          setModalVariant('');
           setModalShow(true);
+
+          return;
         }
+
+        setModalTitle('Княжества в запись добавлены успешно');
+        setModalVariant('withProgress');
+        setModalShow(true);
       })
+
       .catch(error => {
-        setModalText(error);
+        console.log(error)
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки')
+        setModalCanselText('Закрыть');
+        setModalError(error);
+        setModalVariant('');
         setModalShow(true);
       });
   }
 
   const checkAndDeleteKingdom = () => {
-    setModalText('Вы уверены, что хотите удалить княжество из записи');
-    SetModalVariant('2buttons');
+    setModalTitle('Внимание');
+    setModalText('Вы уверены, что хотите удалить княжество из записи?')
+    setModalError('Отменить действие будет невозможно');
+    setModalVariant('2buttons');
+    setModalCanselText('Оставить');
+    setModalSaveText('Удалить');
+    setModalHandleSaveMode(2);
     setModalShow(true);
+  }
+
+  const modalDeleteKingdom = () => {    // modal save mode 2
+    deleteKingdomFromApplication(kingdom.Id)
+      .then(result => {
+        if (!result.result) {
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalError(result.response?.Message!);
+          setModalVariant('');
+          setModalShow(true);
+
+          return;
+        }
+
+        window.location.reload();
+      })
+      .catch(error => {
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки')
+        setModalError(error);
+        setModalVariant('');
+        setModalShow(true);
+      });
+  }
+
+  const modalGotoLogin = () => {    // modal save mode 1
+    navigate('/login');
   }
 
   const handleDateChange = (dates: [Date | null, Date | null]) => {
@@ -77,136 +159,149 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
     setDateTo(dateTo);
   };
 
-  const navigate = useNavigate();
 
   useEffect(() => {
-
-  })
+    if (inApplication && !disabled) {
+      if (applicationDateFrom && applicationDateTo) {
+        setDateFrom(parseISO(applicationDateFrom!.toString()))
+        setDateTo(parseISO(applicationDateTo!.toString()))
+      }
+    }
+  }, [inApplication, disabled, applicationDateFrom, applicationDateTo]);
+  
+  if (modalShow) {
+    return (
+      <MyModal 
+        title={modalTitle}
+        text={modalText}
+        error={modalError}
+        show={modalShow}
+        variant={modalVariant}
+        canselText={modalCanselText}
+        saveText={modalSaveText}
+        onHide={() => {
+          setModalTitle('');
+          setModalText('');
+          setModalError('');
+          setModalVariant('');
+          setModalCanselText('');
+          setModalSaveText('');
+          setModalShow(false);
+          setModalHandleSaveMode(null);
+        }}
+        handleSave={() => {
+          switch (modalHandleSaveMode) {
+            case 1:
+              modalGotoLogin();
+              break;
+            case 2: 
+              modalDeleteKingdom();
+              break;
+            default:
+              break;
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <Col xs={12} sm={8} md={4} lg={3} 
     className={`feed-kingdom feed-kingdom__kingdom-${kingdom.Id} m-1 p-1`}>
-       { modalShow ? (
-        <MyModal 
-        title={'Не найдена запись'}
-        text={'Детали ошибки:'}
-        error={modalText}
-        show={setModalShow}
-        variant={modalVariant}
-        onHide={() => setModalShow(false)}
-        handleSave={() => {
-          deleteKingdomFromApplication(kingdom.Id)
-            .then(result => {
-              if (!result.result) {
-                setModalText(result.response?.Message!);
-                setModalShow(true);
-              }
-
-              // window.location.reload();
-            })
-            .catch(error => {
-              setModalText(error);
-              setModalShow(true);
-            });
-          }
-        }
-      />
-      ) : (
-        <Col onClick={() => navigate(`/kingdom/${kingdom.Id}`)}>
-          <div className="feed-kingdom__kingdom_title">
-            <div className="feed-kingdom__kingdom_title-text text-h2-medium" style={{textAlign: 'center'}}>{kingdom.Name}</div>
-          </div>
-          <div className="feed-kingdom__kingdom_img p-1">
-            <img src={kingdom.Image} alt={kingdom.Name} className="w-100" />
-          </div>
-          <div 
-            className="feed-kingdom__kingdom_btns"
-            onClick={(e) => e.stopPropagation()}
-          >
-            { !inApplication ? (  // case open from feed
-              <div>
-                <Row>
-                  <Button 
-                    onClick={e => {
-                      e.stopPropagation();
-                      checkAndAddKingdomToApplication();
-                    }}>
-                    Добавить в заявку
-                  </Button>
-                </Row>
+      <Col onClick={() => navigate(`/kingdom/${kingdom.Id}`)}>
+        <div className="feed-kingdom__kingdom_title">
+          <div className="feed-kingdom__kingdom_title-text text-h2-medium" style={{textAlign: 'center'}}>{kingdom.Name}</div>
+        </div>
+        <div className="feed-kingdom__kingdom_img p-1">
+          <img src={kingdom.Image} alt={kingdom.Name} className="w-100" />
+        </div>
+        <div 
+          className="feed-kingdom__kingdom_btns"
+          onClick={(e) => e.stopPropagation()}
+        >
+          { !inApplication ? (  // case open from feed
+            <div>
+              <Row>
+                <Button 
+                  onClick={e => {
+                    e.stopPropagation();
+                    checkAndAddKingdomToApplication();
+                  }}>
+                  Добавить в заявку
+                </Button>
+              </Row>
+              <Row>
+                <DatePicker
+                  placeholderText="Выберите сроки"
+                  selected={dateFrom}
+                  onChange={handleDateChange}
+                  startDate={dateFrom}
+                  endDate={dateTo}
+                  selectsRange
+                  dateFormat="dd/MM/yyyy"
+                  locale={ru}
+                />
+              </Row>    
+            </div>
+          ) : (  // case open from application
+            <div>
+              { disabled ? (  // case application sended
                 <Row>
                   <DatePicker
                     placeholderText="Выберите сроки"
+                    // selected={parseISO(applicationDateFrom!.toString())}
+                    // onChange={() => {}}
+                    // startDate={parseISO(applicationDateFrom!.toString())}
+                    // endDate={parseISO(applicationDateTo!.toString())}
                     selected={dateFrom}
-                    onChange={handleDateChange}
+                    onChange={() => {}}
                     startDate={dateFrom}
                     endDate={dateTo}
+                    disabled={true}
                     selectsRange
                     dateFormat="dd/MM/yyyy"
                     locale={ru}
                   />
-                </Row>    
-              </div>
-            ) : (  // case open from application
-              <div>
-                { disabled ? (  // case application sended
+              </Row>
+              ) : (  // case application can be modified
+                <div>
+                  <Row>
+                    <Button 
+                      onClick={e => {
+                        e.stopPropagation();
+                        checkAndAddKingdomToApplication();
+                      }}>
+                      Сохранить новые сроки
+                    </Button>
+                  </Row>
                   <Row>
                     <DatePicker
                       placeholderText="Выберите сроки"
-                      // selected={parseISO(applicationDateFrom!.toString())}
-                      // onChange={() => {}}
-                      // startDate={parseISO(applicationDateFrom!.toString())}
-                      // endDate={parseISO(applicationDateTo!.toString())}
                       selected={dateFrom}
-                      onChange={() => {}}
+                      onChange={handleDateChange}
                       startDate={dateFrom}
                       endDate={dateTo}
-                      disabled={true}
+                      disabled={false}
                       selectsRange
                       dateFormat="dd/MM/yyyy"
                       locale={ru}
                     />
-                </Row>
-                ) : (  // case application can be modified
-                  <div>
-                    <Row>
-                      <Button 
-                        onClick={e => {
-                          e.stopPropagation();
-                          checkAndAddKingdomToApplication();
-                        }}>
-                        Сохранить новые сроки
-                      </Button>
-                    </Row>
-                    <Row>
-                      <DatePicker
-                        placeholderText="Выберите сроки"
-                        selected={parseISO(applicationDateFrom!.toString())}
-                        onChange={() => {}}
-                        startDate={parseISO(applicationDateFrom!.toString())}
-                        endDate={parseISO(applicationDateTo!.toString())}
-                        disabled={true}
-                        selectsRange
-                        dateFormat="dd/MM/yyyy"
-                        locale={ru}
-                      />
-                    </Row>
-                    <Row>
-                      <Button variant="danger" 
-                        onClick={e => {
-                          e.stopPropagation();
-                          checkAndDeleteKingdom();
-                        }}>
-                        Удалить
-                      </Button>
-                    </Row>
-                  </div>    
-                ) }
-              </div>    
-            )}
-          </div>
-        </Col>
-      ) }
+                  </Row>
+                  <Row>
+                    <Button variant="danger" 
+                      onClick={e => {
+                        e.stopPropagation();
+                        checkAndDeleteKingdom();
+                      }}>
+                      Удалить
+                    </Button>
+                  </Row>
+                </div>    
+              ) }
+            </div>    
+          )}
+        </div>
+      </Col>
     </Col>
   );
 }
