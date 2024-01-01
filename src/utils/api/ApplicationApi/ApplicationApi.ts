@@ -2,7 +2,8 @@ import axios from "axios";
 import { Application } from "../../../Interfaces/dataStructures/ApplicationInterface";
 import { ApplicationStatusRequest, 
   AddKingdomToApplicationRequest,
-  DeleteKingdomFromApplicationRequest } from "./ApplicationRequestInterfaces";
+  DeleteKingdomFromApplicationRequest, 
+  CreateApplicationAndAddKingdom} from "./ApplicationRequestInterfaces";
 import { ResponseDefault } from "../ResponseInterface";
 
 export class ApplicationApi {
@@ -175,7 +176,8 @@ export class ApplicationApi {
         });
   }
 
-  createApplication = async (): Promise<ResponseDefault> => {
+  createApplication = async (dateFrom: Date, dateTo: Date, 
+    kingdomId: Number): Promise<ResponseDefault> =>  {
     const configItem = this.config.find((item) => item.name === 'createApplication');
     if (!configItem) {
       throw new Error('Не найдена конфигурация для createApplication');
@@ -185,8 +187,15 @@ export class ApplicationApi {
       credenlials: 'include',
     }
 
-    return axios.get(
+    const body: CreateApplicationAndAddKingdom = {
+      KingdomId: kingdomId,
+      From: dateFrom,
+      To: dateTo,
+    }
+
+    return axios.post(
       configItem.url, 
+      body, 
       {
         headers,
       },

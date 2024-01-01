@@ -3,6 +3,7 @@ import { useCallback } from "react";
 
 import { SetApplications, 
   SetApplicationToCreate,
+  CreateApplicationToCreate,
   SetCurrentApplication, 
   DeleteCurrentApplication,
   AddKingdomToApplication,
@@ -40,20 +41,17 @@ export function useApplication() {
     
         if (inDevelopment) {
           return setApplicationToCreate(inDevelopment.Id!);
-        } else {
-          const res = await createApplication();
-
-          return res;
         }
 
-        return { result: true, response }
+        return { result: true, response };
       } else if (response.Status === 'error') {  // case error
-        dispatch(SetApplications([]));
-
-        const res = await createApplication();
-        if (!res.result) {
-          return res;
-        }
+        const inDevelopment = applications?.find((application: Application) => {
+          return application.State === 'В разработке';
+        });
+    
+        if (inDevelopment) {
+          return setApplicationToCreate(inDevelopment.Id!);
+        } 
 
         return { result: false, response }
       } else {  // case no connect to server
@@ -64,7 +62,7 @@ export function useApplication() {
           Body: null,
         }
         
-        return { result: false, response};
+        return { result: false, response };
       } 
     } catch (error: any) {
       const response: ResponseDefault = {
@@ -181,24 +179,6 @@ export function useApplication() {
   }
 
   const addKingdomToApplication = async (dateFrom: Date, dateTo: Date, kingdom: Kingdom) => {
-    if (!applicationToCreate) {
-      const response: ResponseDefault = {
-        Code: 400,
-        Status: 'error',
-        Message: 'Еще нет активных записей',
-        Body: null,
-      };
-      
-      return { result: false, response };
-      
-      const res = await createApplication();
-      if (!res.result) {
-        return res;
-      }
-
-      // return await addKingdomToApplication(dateFrom, dateTo, kingdom);
-    }
-
     for (const kingdomWT of applicationToCreate?.KingdomsWithTerm || []) {
       if (kingdomWT.Kingdom.Name === kingdom.Name) {
         const response: ResponseDefault = {
@@ -319,12 +299,25 @@ export function useApplication() {
     }
   }
 
-  const createApplication = async () => {
+  const createApplication = async (dateFrom: Date, dateTo: Date, kingdom: Kingdom) => {
     try {
-      const response = await applicationsApi.createApplication();
+      const response = await applicationsApi.createApplication(dateFrom, dateTo, kingdom.Id);
       if (response.Status === 'ok') {   // case successful
-        const applicationToCreate: Application = response.Body;
-        dispatch(SetApplicationToCreate(applicationToCreate));
+        const application: Application = {
+          Id: response.Body.Application.Id,
+          State: response.Body.Application.State, 
+          DateCreate: response.Body.Application.DateCreate,
+          DateSend: response.Body.Application.DateSend,
+          DateComplete: response.Body.Application.DateComplete,
+          Ruler: response.Body.Application.Ruler,
+          Creator: response.Body.Application.Creator,
+          CreatorId: response.Body.Application.CreatorRefer,
+          Moderator: response.Body.Application.Moderator,
+          ModeratorId: response.Body.Application.ModeratorRefer,
+          Check: response.Body.Application.Check,
+          KingdomsWithTerm: response.Body.Kingdoms,
+        }
+        dispatch(CreateApplicationToCreate(application))
 
         return { result: true, response }
       } else if (response.Status === 'error') {  // case error
@@ -338,7 +331,7 @@ export function useApplication() {
           Body: null,
         }
         
-        return { result: false, response};
+        return { result: false, response };
       } 
     } catch (error: any) {
       console.log(error)
@@ -387,22 +380,22 @@ export function useApplication() {
   const debouncedUpdateApplicationStatus = useCallback(debounce(updateApplicationStatus, debounceTime), [updateApplicationStatus]);
   const debouncedCreateApplication = useCallback(debounce(createApplication, debounceTime), [createApplication]);
 
-  return {
-    applications,
-    currentApplication,
-    applicationToCreate,
-    applicationsCount,
-    applicationToCreateKingdomsCount,
-    setApplications: debouncedSetApplications,
-    setCurrentApplication: debouncedSetCurrentApplication,
-    setApplicationToCreate: debouncedSetApplicationToCreate,
-    deleteCurrentApplication: debouncedDeleteCurrentApplication,
-    deleteApplicationToCreate: debouncedDeleteApplicationToCreate,
-    addKingdomToApplication: debouncedAddKingdomToApplication,
-    deleteKingdomFromApplication: debouncedDeleteKingdomFromApplication,
-    updateApplicationStatus: debouncedUpdateApplicationStatus,
-    createApplication: debouncedCreateApplication,
-  };
+  // return {
+  //   applications,
+  //   currentApplication,
+  //   applicationToCreate,
+  //   applicationsCount,
+  //   applicationToCreateKingdomsCount,
+  //   setApplications: debouncedSetApplications,
+  //   setCurrentApplication: debouncedSetCurrentApplication,
+  //   setApplicationToCreate: debouncedSetApplicationToCreate,
+  //   deleteCurrentApplication: debouncedDeleteCurrentApplication,
+  //   deleteApplicationToCreate: debouncedDeleteApplicationToCreate,
+  //   addKingdomToApplication: debouncedAddKingdomToApplication,
+  //   deleteKingdomFromApplication: debouncedDeleteKingdomFromApplication,
+  //   updateApplicationStatus: debouncedUpdateApplicationStatus,
+  //   createApplication: debouncedCreateApplication,
+  // };
 
   return {
     applications,

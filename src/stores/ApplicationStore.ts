@@ -30,12 +30,16 @@ export const ApplicationSlice = createSlice({
       state.applicationToCreate = action.payload;
       state.applicationToCreateKingdomsCount = action.payload.KingdomsWithTerm?.length ? 
         action.payload.KingdomsWithTerm.length : 0;
+    },
+    CreateApplicationToCreate: (state, action: PayloadAction<Application>) => {
+      state.applicationToCreate = action.payload;
+      state.applicationToCreateKingdomsCount = action.payload.KingdomsWithTerm?.length ? 
+        action.payload.KingdomsWithTerm.length : 0;
 
-      console.log(action.payload);
-      console.log(state.applicationToCreate);
+      state.applications.push(state.applicationToCreate);
+      state.applicationsCount += 1;
     },
     DeleteApplicationToCreate: (state) => {
-      console.log('DeleteApplicationToCreate');
       state.applicationToCreate = null;
       state.applicationToCreateKingdomsCount = 0;
     },
@@ -77,6 +81,7 @@ export const applicationReducer = ApplicationSlice.reducer;
 export const { 
   SetApplications, 
   SetApplicationToCreate,
+  CreateApplicationToCreate,
   SetCurrentApplication, 
   DeleteCurrentApplication,
   AddKingdomToApplication,

@@ -31,7 +31,10 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
   const [modalSaveText, setModalSaveText] = useState('');
   const [modalHandleSaveMode, setModalHandleSaveMode] = useState<Number | null>(null);
 
-  const { addKingdomToApplication, deleteKingdomFromApplication } = useApplication();
+  const { applicationToCreate,
+    createApplication,
+    addKingdomToApplication, 
+    deleteKingdomFromApplication } = useApplication();
 
   const { isAuthorized } = useAuth();
 
@@ -84,34 +87,66 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
       return;
     }
 
-    addKingdomToApplication(dateFrom, dateTo, kingdom)
-      .then(result => {
-        console.log(result)
-        if (!result.result) {
-          setModalTitle('Ошибка');
-          setModalText('Детали ошибки')
-          setModalError(result.response?.Message!);
-          setModalCanselText('Закрыть');
-          setModalVariant('');
+    if (!applicationToCreate) {
+      createApplication(dateFrom, dateTo, kingdom)
+        .then(result => {
+          if (!result.result) {
+            setModalTitle('Ошибка');
+            setModalText('Детали ошибки')
+            setModalError(result.response?.Message!);
+            setModalCanselText('Закрыть');
+            setModalVariant('');
+            setModalShow(true);
+
+            return;
+          }
+
+          setModalTitle('Княжества в запись добавлены успешно');
+          setModalVariant('withProgress');
           setModalShow(true);
 
           return;
-        }
+        })
 
-        setModalTitle('Княжества в запись добавлены успешно');
-        setModalVariant('withProgress');
-        setModalShow(true);
-      })
+        .catch(error => {
+          console.log(error)
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalCanselText('Закрыть');
+          setModalError(error);
+          setModalVariant('');
+          setModalShow(true);
+        });
+    } else {
+      addKingdomToApplication(dateFrom, dateTo, kingdom)
+        .then(result => {
+          console.log(result)
+          if (!result.result) {
+            setModalTitle('Ошибка');
+            setModalText('Детали ошибки')
+            setModalError(result.response?.Message!);
+            setModalCanselText('Закрыть');
+            setModalVariant('');
+            setModalShow(true);
 
-      .catch(error => {
-        console.log(error)
-        setModalTitle('Ошибка');
-        setModalText('Детали ошибки')
-        setModalCanselText('Закрыть');
-        setModalError(error);
-        setModalVariant('');
-        setModalShow(true);
-      });
+            return;
+          }
+
+          setModalTitle('Княжества в запись добавлены успешно');
+          setModalVariant('withProgress');
+          setModalShow(true);
+        })
+
+        .catch(error => {
+          console.log(error)
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalCanselText('Закрыть');
+          setModalError(error);
+          setModalVariant('');
+          setModalShow(true);
+        });
+    }
   }
 
   const checkAndDeleteKingdom = () => {

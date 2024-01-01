@@ -58,7 +58,11 @@ function NavbarUser() {
 
   useEffect(() => {
     setApplications(null);
-  }, [user])
+  }, [])
+
+  useEffect(() => {
+    console.log('update', applicationToCreateKingdomsCount);
+  }, [applicationToCreate, applicationToCreateKingdomsCount, user])
 
   if (modalShow) {
     return (
@@ -112,7 +116,7 @@ function NavbarUser() {
                 </div>
 
               ) :(
-                <div></div>
+                <></>
               )}
               
               <NavDropdown title={user.Name} id="basic-nav-dropdown">

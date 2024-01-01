@@ -14,3 +14,9 @@ export interface DeleteKingdomFromApplicationRequest {
   ApplicationId: Number,
   KingdomId: Number,
 }
+
+export interface CreateApplicationAndAddKingdom {
+  KingdomId: Number,
+  From: Date,
+  To: Date,
+}
