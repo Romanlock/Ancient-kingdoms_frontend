@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Button, Row, Col, Image, Form,  } from "react-bootstrap";
 import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 
-
 import { useAuth } from "../../hooks/useAuth";
 import { LoginCarousel } from "../../components/UI/Carousel/Carousel";
 import MyModal from "../../components/UI/Modal/Modal";
+import { useApp } from "../../hooks/useApp";
+import { errorMatching } from "../../utils/errorMatching/errorMatching";
+
 
 const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +27,7 @@ const LoginPage: React.FC = () => {
 
   const { isAuthorized, login } = useAuth();
 
+  const { setCurrentPage, deleteCurrentPage } = useApp();
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value)
@@ -39,7 +42,15 @@ const LoginPage: React.FC = () => {
   };
 
   useEffect(() => {
+    setCurrentPage('Вход');
+  }, [])
+
+  useEffect(() => {
     if (isAuthorized) navigate('/kingdom');
+
+    return () => {
+      deleteCurrentPage();
+    }
   }, [isAuthorized]);
 
   async function loginUser() {
@@ -67,7 +78,7 @@ const LoginPage: React.FC = () => {
     if (errorMessage) {
       setModalTitle('Ошибка');
       setModalText('Детали ошибки')
-      setModalError(errorMessage);
+      setModalError(errorMatching(errorMessage));
       setModalCanselText('Закрыть');
       setModalVariant('');
       setModalShow(true);  

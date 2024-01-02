@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -10,15 +10,23 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import SignupPage from './pages/SignupPage/SignupPage';
 import ApplicationFeed from './pages/ApplicationsFeed/ApplicationsFeed';
 import ApplicationPage from './pages/ApplicationPage/ApplicationPage';
+import Loader from './components/UI/Loader/Loader';
 
 
 const App: React.FC = () => {
   const { isModerator, checkLogin } = useAuth();
 
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => { 
-    checkLogin();
+    checkLogin()
+      .then(() => setIsLoaded(true))
+      .catch(() => setIsLoaded(true))
   }, []);
 
+  if (!isLoaded) {
+    return <Loader />
+  }
 
   return(
     <BrowserRouter basename="/">

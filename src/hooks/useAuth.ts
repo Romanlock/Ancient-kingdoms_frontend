@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { SetUser, DeleteUser } from "../stores/UserStore";
 import { User } from "../Interfaces/dataStructures/UserInterface";
 import { AuthorizationApi } from "../utils/api/AuthorizationApi/AuthorizationApi";
+import { useApplication } from "./useApplication";
 
 
 export function useAuth() {
   const authorizationApi = new AuthorizationApi();
   const { user, isAuthorized, isModerator } = useSelector((store: any) => store.user);
+
+  const { clearStore } = useApplication();
 
   const dispatch = useDispatch();
 
@@ -17,6 +20,7 @@ export function useAuth() {
 
   const deleteUser = () => {
     dispatch(DeleteUser());
+    clearStore();
   }
 
   const checkLogin = async () => {

@@ -7,6 +7,8 @@ import Loader from "../../components/UI/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import { Application } from "../../Interfaces/dataStructures/ApplicationInterface";
 import ApplicationItem from "../../components/ApplicationItem/ApplicationItem";
+import { useApp } from "../../hooks/useApp";
+import { errorMatching } from "../../utils/errorMatching/errorMatching";
 
 
 const ApplicationFeed: React.FC = () => {
@@ -24,13 +26,17 @@ const ApplicationFeed: React.FC = () => {
 
   const { applications, setApplications } = useApplication();
 
+  const { setCurrentPage, deleteCurrentPage } = useApp();
+  
   useEffect(() => {
+    setCurrentPage('Мои записи');
+
     setApplications(null)
       .then(result => {
         if (!result.result) {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
-          setModalError(result.response?.Message!);
+          setModalError(errorMatching(result.response?.Message!));
           setModalVariant('');
           setModalCanselText('Закрыть');
           setModalShow(true);
@@ -45,13 +51,17 @@ const ApplicationFeed: React.FC = () => {
       .catch(error => {
         setModalTitle('Ошибка');
         setModalText('Детали ошибки:');
-        setModalError(error);
+        setModalError(errorMatching(error));
         setModalVariant('');
         setModalCanselText('Закрыть');
         setModalShow(true);
 
         setIsLoaded(true);
       })
+
+      return () => {
+        deleteCurrentPage();
+      }
 
   }, [])
 

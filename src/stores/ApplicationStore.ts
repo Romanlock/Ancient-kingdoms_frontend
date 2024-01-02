@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
-import { Kingdom, KingdomWithTerm } from "../Interfaces/dataStructures/KingdomInterface";
+import { KingdomWithTerm } from "../Interfaces/dataStructures/KingdomInterface";
+
 
 interface ApplicationState {
   applications: Application[],  // все заявки
@@ -22,6 +24,13 @@ export const ApplicationSlice = createSlice({
   name: 'applications',
   initialState,
   reducers: {
+    ClearStore: (state) => {
+      state.applications = [],
+      state.currentApplication = null,
+      state.applicationToCreate = null,
+      state.applicationsCount = 0,
+      state.applicationToCreateKingdomsCount = 0
+    },
     SetApplications: (state, action: PayloadAction<Application[]>) => {
       state.applications = action.payload;
       state.applicationsCount = action.payload.length;
@@ -79,6 +88,7 @@ export const ApplicationSlice = createSlice({
 
 export const applicationReducer = ApplicationSlice.reducer;
 export const { 
+  ClearStore,
   SetApplications, 
   SetApplicationToCreate,
   CreateApplicationToCreate,

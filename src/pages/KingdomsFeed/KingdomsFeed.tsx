@@ -6,6 +6,8 @@ import { Kingdom } from "../../Interfaces/dataStructures/KingdomInterface";
 import Loader from '../../components/UI/Loader/Loader';
 import { useKingdom } from '../../hooks/useKingdom';
 import MyModal from '../../components/UI/Modal/Modal';
+import { useApp } from '../../hooks/useApp';
+import { errorMatching } from '../../utils/errorMatching/errorMatching';
 
 
 const KingdomsFeed: React.FC = () => {
@@ -23,13 +25,19 @@ const KingdomsFeed: React.FC = () => {
 
   const { kingdoms, setKingdoms } = useKingdom();
 
+  const { setCurrentPage, deleteCurrentPage } = useApp();
+
+  useEffect(() => {
+    setCurrentPage('Список княжеств');
+  }, [])
+
   useEffect(() => {
     setKingdoms(searchText)
       .then(result => {
         if (!result.result) {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
-          setModalError(result.response?.Message!);
+          setModalError(errorMatching(result.response?.Message!));
           setModalVariant('');
           setModalCanselText('Закрыть');
           setModalShow(true);
@@ -44,7 +52,7 @@ const KingdomsFeed: React.FC = () => {
       .catch(error => {
         setModalTitle('Ошибка');
         setModalText('Детали ошибки:');
-        setModalError(error);
+        setModalError(errorMatching(error));
         setModalVariant('');
         setModalCanselText('Закрыть');
         setModalShow(true);
@@ -53,7 +61,7 @@ const KingdomsFeed: React.FC = () => {
       });
           
     return () => {
-
+      deleteCurrentPage();
     }
   }, [searchText]);
 

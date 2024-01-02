@@ -6,6 +6,8 @@ import { BsFillEyeFill, BsFillEyeSlashFill } from 'react-icons/bs';
 import { useAuth } from "../../hooks/useAuth";
 import { SignupCarousel } from "../../components/UI/Carousel/Carousel";
 import MyModal from "../../components/UI/Modal/Modal";
+import { useApp } from "../../hooks/useApp";
+import { errorMatching } from "../../utils/errorMatching/errorMatching";
 
 
 const SignupPage: React.FC = () => {
@@ -27,28 +29,16 @@ const SignupPage: React.FC = () => {
 
   const { isAuthorized, signup } = useAuth();
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value)
-  }
+  const { setCurrentPage, deleteCurrentPage } = useApp();
 
-  const handlePasswordChage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value)
-  }
-
-  const handlePasswordRepeatChage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordRepeat(event.target.value)
-  }
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const togglePasswordVisibilityRepeat = () => {
-    setShowPasswordRepeat(!showPasswordRepeat);
-  };
+  useEffect(() => {
+    setCurrentPage('Регистрация');
+  }, [])
 
   useEffect(() => {
     if (isAuthorized) navigate('/kingdom');
+
+    return () => deleteCurrentPage();
   }, [isAuthorized]);
 
   async function signupUser() {
@@ -86,7 +76,7 @@ const SignupPage: React.FC = () => {
     if (errorMessage) {
       setModalTitle('Ошибка');
       setModalText('Детали ошибки')
-      setModalError(errorMessage);
+      setModalError(errorMatching(errorMessage));
       setModalCanselText('Закрыть');
       setModalVariant('');
       setModalShow(true);   
@@ -129,7 +119,7 @@ const SignupPage: React.FC = () => {
                 <Form.Control type="text" 
                   placeholder="Введите имя пользователя"
                   value={username}
-                  onChange={handleUsernameChange}
+                  onChange={(event) => setUsername(event.target.value)}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="signupPasswordInput">
@@ -138,9 +128,9 @@ const SignupPage: React.FC = () => {
                   <Form.Control type={showPassword ? 'text' : 'password'}
                     placeholder="Введите пароль"
                     value={password}
-                    onChange={handlePasswordChage}
+                    onChange={(event) => setPassword(event.target.value)}
                   />
-                  <span onClick={togglePasswordVisibility} 
+                  <span onClick={() => setShowPassword(!showPassword)} 
                     className="signup_page__password-toggle-icon">
                       {showPassword ? <BsFillEyeSlashFill /> : <BsFillEyeFill />}
                   </span>
@@ -152,9 +142,9 @@ const SignupPage: React.FC = () => {
                   <Form.Control type={showPasswordRepeat ? 'text' : 'password'}
                     placeholder="Введите пароль"
                     value={passwordRepeat}
-                    onChange={handlePasswordRepeatChage}
+                    onChange={(event) => setPasswordRepeat(event.target.value)}
                   />
-                  <span onClick={togglePasswordVisibilityRepeat} 
+                  <span onClick={() => setShowPasswordRepeat(!showPasswordRepeat)} 
                     className="signup_page__password-toggle-icon">
                       {showPasswordRepeat ? <BsFillEyeSlashFill /> : <BsFillEyeFill />}
                   </span>

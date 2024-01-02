@@ -6,6 +6,7 @@ import Breadcrumbs from '../UI/Breadcrumbs/Breadcrumbs';
 import { useAuth } from '../../hooks/useAuth';
 import { useApplication } from '../../hooks/useApplication';
 import MyModal from '../UI/Modal/Modal';
+import { useApp } from '../../hooks/useApp';
 
 
 function NavbarUser() {
@@ -19,15 +20,16 @@ function NavbarUser() {
   const [modalCanselText, setModalCanselText] = useState('');
   const [modalSaveText, setModalSaveText] = useState('');
 
+  const { currentPage } = useApp();
+
   const { user, isAuthorized, isModerator, logout } = useAuth()
   const { 
+    applications,
     applicationsCount, 
     applicationToCreate,
     applicationToCreateKingdomsCount,
     setApplications,
-    setApplicationToCreate,
-    deleteApplicationToCreate,
-    createApplication } = useApplication();
+    setApplicationToCreate } = useApplication();
 
   const checkApplicationToCreate = () => {
     if (!applicationToCreate?.Id) {
@@ -57,12 +59,11 @@ function NavbarUser() {
   }
 
   useEffect(() => {
-    setApplications(null);
-  }, [])
+    setApplications(null)
+  }, [user])
 
   useEffect(() => {
-    console.log('update', applicationToCreateKingdomsCount);
-  }, [applicationToCreate, applicationToCreateKingdomsCount, user])
+  }, [applications, applicationToCreate, applicationToCreateKingdomsCount, currentPage])
 
   if (modalShow) {
     return (
@@ -83,6 +84,7 @@ function NavbarUser() {
   <div>
     <Navbar expand="lg" className="bg-body-tertiary d-flex justify-content-between" fixed='top'>
       <Breadcrumbs />
+      <span className='text-h2-medium'>{currentPage}</span>
       <Container style={{ width: 'min-content', marginRight: '5%' }}>
         <Navbar.Brand 
         style={{cursor: 'pointer'}}
@@ -121,8 +123,21 @@ function NavbarUser() {
               
               <NavDropdown title={user.Name} id="basic-nav-dropdown">
                 <NavDropdown.Item onClick={ () => {
-                  logout();
-                  navigate('/login');
+                  logout()
+                    .then(() => {
+                      navigate('/login');
+
+                      return;
+                    })
+            
+                    .catch(error => {
+                      setModalTitle('Ошибка');
+                      setModalText('Детали ошибки')
+                      setModalCanselText('Закрыть');
+                      setModalError(error);
+                      setModalVariant('');
+                      setModalShow(true);
+                    });
                 } }>Выйти</NavDropdown.Item>
               </NavDropdown>
             </Nav>

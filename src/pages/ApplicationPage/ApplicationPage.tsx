@@ -8,6 +8,7 @@ import MyModal from "../../components/UI/Modal/Modal";
 import Loader from "../../components/UI/Loader/Loader";
 import KingdomItem from "../../components/KingdomItem/KingdomItem";
 import ApplicationStatusSelector from "../../components/UI/Selector/ApplicationStatusSelector";
+import { useApp } from "../../hooks/useApp";
 
 
 const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
@@ -22,6 +23,8 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   const [modalSaveText, setModalSaveText] = useState('');
   
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const { setCurrentPage, deleteCurrentPage } = useApp();
 
   const navigate = useNavigate();
 
@@ -61,6 +64,8 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   }
 
   useEffect(() => {
+    setCurrentPage('Просмотр записи');
+
     if (!/^\d+$/.test(id!)) {
       setModalTitle('Ошибка');
       setModalText('Детали ошибки')
@@ -100,7 +105,10 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
         });
     }
 
-    return () => deleteCurrentApplication();
+    return () => {
+      deleteCurrentApplication();
+      deleteCurrentPage();
+    };
   }, [])
 
   if (!isLoaded) {

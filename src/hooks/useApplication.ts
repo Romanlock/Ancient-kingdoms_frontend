@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback } from "react";
 
-import { SetApplications, 
+import { ClearStore,
+  SetApplications, 
   SetApplicationToCreate,
   CreateApplicationToCreate,
   SetCurrentApplication, 
@@ -29,6 +30,10 @@ export function useApplication() {
 
   const dispatch = useDispatch();
 
+  const clearStore = () => {
+    dispatch(ClearStore());
+  }
+
   const setApplications = async (id: Number | null) => {    
     try {
       const response = await applicationsApi.getApplicationsById(id);
@@ -53,6 +58,8 @@ export function useApplication() {
           return setApplicationToCreate(inDevelopment.Id!);
         } 
 
+        dispatch(SetApplications([]));
+
         return { result: false, response }
       } else {  // case no connect to server
         const response: ResponseDefault = {
@@ -65,6 +72,8 @@ export function useApplication() {
         return { result: false, response };
       } 
     } catch (error: any) {
+      dispatch(ClearStore());
+
       const response: ResponseDefault = {
         Code: 418,
         Status: 'undefined error',
@@ -403,6 +412,7 @@ export function useApplication() {
     applicationToCreate,
     applicationsCount,
     applicationToCreateKingdomsCount,
+    clearStore,
     setApplications,
     setCurrentApplication,
     setApplicationToCreate,

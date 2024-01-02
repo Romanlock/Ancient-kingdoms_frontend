@@ -5,6 +5,7 @@ import { Button, Form, Container, Row, Image, Col, ModalTitle } from 'react-boot
 import { useKingdom } from '../../hooks/useKingdom';
 import Loader from "../../components/UI/Loader/Loader";
 import MyModal from "../../components/UI/Modal/Modal";
+import { useApp } from "../../hooks/useApp";
 
 
 const KingdomPage: React.FC = () => {
@@ -24,8 +25,12 @@ const KingdomPage: React.FC = () => {
  
   const { kingdom, setKingdom, deleteKingdom } = useKingdom();
   
+  const { setCurrentPage, deleteCurrentPage } = useApp();
+
 
   useEffect(() => {
+    setCurrentPage('Просмотр княжества');
+
     if (!/^\d+$/.test(id!)) {
       setModalTitle('Ошибка');
       setModalText('Детали ошибки')
@@ -65,7 +70,10 @@ const KingdomPage: React.FC = () => {
         });
     }    
 
-    return () => deleteKingdom();
+    return () => {
+      deleteKingdom();
+      deleteCurrentPage();
+    };
   }, []);
 
   if (!isLoaded) {
