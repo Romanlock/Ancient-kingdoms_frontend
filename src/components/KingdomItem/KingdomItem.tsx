@@ -30,6 +30,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
   const [modalCanselText, setModalCanselText] = useState('');
   const [modalSaveText, setModalSaveText] = useState('');
   const [modalHandleSaveMode, setModalHandleSaveMode] = useState<Number | null>(null);
+  const [modalHandleHideMode, setModalHandleHideMode] = useState<Number | null>(null);
 
   const { applicationToCreate,
     createApplication,
@@ -101,7 +102,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
             return;
           }
 
-          setModalTitle('Княжества в запись добавлены успешно');
+          setModalTitle('Княжество добавлено');
           setModalVariant('withProgress');
           setModalShow(true);
 
@@ -132,7 +133,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
             return;
           }
 
-          setModalTitle('Княжества в запись добавлены успешно');
+          setModalTitle('Княжество добавлено');
           setModalVariant('withProgress');
           setModalShow(true);
         })
@@ -173,7 +174,14 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
           return;
         }
 
-        window.location.reload();
+        setModalTitle('Княжество удалено');
+        setModalText('')
+        setModalError('');
+        setModalCanselText('');
+        setModalSaveText('');
+        setModalVariant('withProgress');
+        setModalShow(true);
+        setModalHandleHideMode(2);
       })
       .catch(error => {
         setModalTitle('Ошибка');
@@ -188,12 +196,35 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
     navigate('/login');
   }
 
+  const modalHideDefault = () => {   // modal hide mode 1
+    setModalTitle('');
+    setModalText('');
+    setModalError('');
+    setModalVariant('');
+    setModalCanselText('');
+    setModalSaveText('');
+    setModalShow(false);
+    setModalHandleSaveMode(null);
+  }
+
+  const modalHideDelete = () => {   // modal hide mode 2
+    setModalTitle('');
+    setModalText('');
+    setModalError('');
+    setModalVariant('');
+    setModalCanselText('');
+    setModalSaveText('');
+    setModalShow(false);
+    setModalHandleSaveMode(null);
+    setModalHandleHideMode(null);
+    window.location.reload();
+  }
+
   const handleDateChange = (dates: [Date | null, Date | null]) => {
     const [dateFrom, dateTo] = dates;
     setDateFrom(dateFrom);
     setDateTo(dateTo);
   };
-
 
   useEffect(() => {
     if (inApplication && !disabled) {
@@ -215,14 +246,17 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
         canselText={modalCanselText}
         saveText={modalSaveText}
         onHide={() => {
-          setModalTitle('');
-          setModalText('');
-          setModalError('');
-          setModalVariant('');
-          setModalCanselText('');
-          setModalSaveText('');
-          setModalShow(false);
-          setModalHandleSaveMode(null);
+          switch (modalHandleHideMode) {
+            case 1:
+              modalHideDefault();
+              break;
+            case 2: 
+              modalHideDelete();
+              break;
+            default:
+              modalHideDefault();
+          }
+          
         }}
         handleSave={() => {
           switch (modalHandleSaveMode) {

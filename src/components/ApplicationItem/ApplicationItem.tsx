@@ -4,7 +4,6 @@ import { Application } from "../../Interfaces/dataStructures/ApplicationInterfac
 import { useNavigate } from "react-router-dom";
 
 
-
 const ApplicationItem: React.FC<{ application: Application }> = ({ application }) => {
   const navigate = useNavigate();
 
@@ -20,7 +19,8 @@ const ApplicationItem: React.FC<{ application: Application }> = ({ application }
         </Form.Label>
         <Col className="applications-feed__textcontent">
           <Form.Control className="text-base1-medium"
-          plaintext readOnly defaultValue={application.Ruler} />
+          plaintext readOnly defaultValue={ application.Ruler != '' ? 
+          application.Ruler : 'Правитель не выбран' } />
         </Col>
       </Form.Group>
       <Form.Group as={Col} xs={4} sm={4} md={4} lg={4} 
