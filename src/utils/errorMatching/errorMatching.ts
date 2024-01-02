@@ -11,5 +11,8 @@ export const errorMatching = (serverError: string): string =>
     ? 'Неверный пароль'
     : serverError === 'error creating user entity: user already existed'
     ? 'Пользователь уже зарегистрирован'
+    : serverError === 'error getting necessary kingdoms from application: no necessary ruler applications found'
+    ? 'Заявка не найдена'
     : serverError;
+    
     

@@ -9,6 +9,7 @@ import Loader from "../../components/UI/Loader/Loader";
 import KingdomItem from "../../components/KingdomItem/KingdomItem";
 import ApplicationStatusSelector from "../../components/UI/Selector/ApplicationStatusSelector";
 import { useApp } from "../../hooks/useApp";
+import { errorMatching } from "../../utils/errorMatching/errorMatching";
 
 
 const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
@@ -21,7 +22,8 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   const [modalVariant, setModalVariant] = useState('');
   const [modalCanselText, setModalCanselText] = useState('');
   const [modalSaveText, setModalSaveText] = useState('');
-  
+  const [modalHandleHideMode, setModalHandleHideMode] = useState<Number | null>(null);
+
   const [isLoaded, setIsLoaded] = useState(false);
 
   const { setCurrentPage, deleteCurrentPage } = useApp();
@@ -39,7 +41,7 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
         if (!result.result) {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
-          setModalError(result.response?.Message!);
+          setModalError(errorMatching(result.response?.Message!));
           setModalVariant('');
           setModalCanselText('Закрыть');
           setModalShow(true);
@@ -54,13 +56,35 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
       .catch(error => {
         setModalTitle('Ошибка');
         setModalText('Детали ошибки:');
-        setModalError(error);
+        setModalError(errorMatching(error));
         setModalVariant('');
         setModalCanselText('Закрыть');
         setModalShow(true);
 
         setIsLoaded(true);
       });
+  }
+
+  const modalHideDefault = () => {   // modal hide mode 1
+    setModalTitle('');
+    setModalText('');
+    setModalError('');
+    setModalVariant('');
+    setModalCanselText('');
+    setModalSaveText('');
+    setModalShow(false);
+  }
+
+  const modalHideGotoApplications = () => {    // modal hide mode 2
+    setModalTitle('');
+    setModalText('');
+    setModalError('');
+    setModalVariant('');
+    setModalCanselText('');
+    setModalSaveText('');
+    setModalHandleHideMode(null);
+    setModalShow(false);
+    navigate('/application');
   }
 
   useEffect(() => {
@@ -72,6 +96,7 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
       setModalError('Неверный формат записи');
       setModalCanselText('Закрыть');
       setModalVariant('');
+      setModalHandleHideMode(2);
       setModalShow(true);
 
       setIsLoaded(true);
@@ -81,9 +106,10 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
           if (!result.result) {
             setModalTitle('Ошибка');
             setModalText('Детали ошибки')
-            setModalError(result.response?.Message!);
+            setModalError(errorMatching(result.response?.Message!));
             setModalCanselText('Закрыть');
             setModalVariant('');
+            setModalHandleHideMode(2);
             setModalShow(true);
 
             setIsLoaded(true);
@@ -96,9 +122,10 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
         .catch(error => {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
-          setModalError(error);
+          setModalError(errorMatching(error));
           setModalVariant('');
           setModalCanselText('Закрыть');
+          setModalHandleHideMode(2);
           setModalShow(true);
 
           setIsLoaded(true);
@@ -126,13 +153,17 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
         canselText={modalCanselText}
         saveText={modalSaveText}
         onHide={() => {
-          setModalTitle('');
-          setModalText('');
-          setModalError('');
-          setModalVariant('');
-          setModalCanselText('');
-          setModalSaveText('');
-          setModalShow(false);
+          switch (modalHandleHideMode) {
+            case 1:
+              modalHideDefault();
+              break;
+            case 2: 
+              modalHideGotoApplications();
+              break;
+            default:
+              modalHideDefault();
+          }
+          
         }}
       />
     );
