@@ -29,7 +29,8 @@ function NavbarUser() {
     applicationToCreate,
     applicationToCreateKingdomsCount,
     setApplications,
-    setApplicationToCreate } = useApplication();
+    setApplicationToCreate,
+    setCurrentApplication } = useApplication();
 
   const checkApplicationToCreate = () => {
     if (!applicationToCreate?.Id) {
@@ -50,7 +51,29 @@ function NavbarUser() {
           setModalShow(true);
         }
 
-        navigate(`/application/${applicationToCreate.Id}`)
+        setCurrentApplication(applicationToCreate.Id)
+          .then(result => {
+            if (!result.result) {
+              setModalTitle('Ошибка');
+              setModalText('Детали ошибки')
+              setModalError(result.response?.Message!);
+              setModalCanselText('Закрыть');
+              setModalVariant('');
+              setModalShow(true);
+
+              return;
+            }
+            
+            navigate(`/application/${applicationToCreate.Id}`)
+          })
+          .catch(error => {
+            setModalTitle('Ошибка');
+            setModalText('Детали ошибки:');
+            setModalError(error);
+            setModalVariant('');
+            setModalCanselText('Закрыть');
+            setModalShow(true);
+          });
       })
       .catch(error => {
         setModalText(error);

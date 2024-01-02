@@ -318,10 +318,6 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
                 <Row>
                   <DatePicker
                     placeholderText="Выберите сроки"
-                    // selected={parseISO(applicationDateFrom!.toString())}
-                    // onChange={() => {}}
-                    // startDate={parseISO(applicationDateFrom!.toString())}
-                    // endDate={parseISO(applicationDateTo!.toString())}
                     selected={dateFrom}
                     onChange={() => {}}
                     startDate={dateFrom}

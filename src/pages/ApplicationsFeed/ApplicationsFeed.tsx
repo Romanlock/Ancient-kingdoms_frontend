@@ -27,7 +27,9 @@ const ApplicationFeed: React.FC = () => {
   const { applications, setApplications } = useApplication();
 
   const { setCurrentPage, deleteCurrentPage } = useApp();
-  
+
+  const reversedApplications = applications ? [...applications].reverse() : [];
+
   useEffect(() => {
     setCurrentPage('Мои записи');
 
@@ -89,7 +91,7 @@ const ApplicationFeed: React.FC = () => {
       <div className="applications-page__content">
         <Container>
           <Col className="applications-feed">
-            {applications?.map((application: Application) => (
+            {reversedApplications?.map((application: Application) => (
               <ApplicationItem
               key={application.Id}
               application={application}

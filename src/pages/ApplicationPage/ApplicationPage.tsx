@@ -22,6 +22,7 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   const [modalVariant, setModalVariant] = useState('');
   const [modalCanselText, setModalCanselText] = useState('');
   const [modalSaveText, setModalSaveText] = useState('');
+  const [modalHandleSaveMode, setModalHandleSaveMode] = useState<Number | null>(null);
   const [modalHandleHideMode, setModalHandleHideMode] = useState<Number | null>(null);
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -30,40 +31,134 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
 
   const navigate = useNavigate();
 
-  const { currentApplication, 
+  const { setApplicationToCreate,
+    currentApplication, 
     setCurrentApplication,
     deleteCurrentApplication,
-    updateApplicationStatus } = useApplication();
+    updateApplicationStatus,
+    deleteApplication,
+  } = useApplication();
 
-  const sendApplication = () => {
+  const saveApplication = () => {
+    
+  }
+
+  const checkAndSendApplication = () => {
+    setModalTitle('Внимание');
+    setModalText('Вы уверены, что хотите отправить запись?')
+    setModalError('После отправки редактирование будет невозможно');
+    setModalVariant('2buttons');
+    setModalCanselText('Не отправлять');
+    setModalSaveText('Отправить');
+    setModalHandleSaveMode(1);
+    setModalShow(true);
+  }
+
+  const checkAndDeleteApplication = () => {
+    setModalTitle('Внимание');
+    setModalText('Вы уверены, что хотите удалить эту запись?')
+    setModalError('Отменить действие будет невозможно');
+    setModalVariant('2buttons');
+    setModalCanselText('Оставить');
+    setModalSaveText('Удалить');
+    setModalHandleSaveMode(2);
+    setModalShow(true);
+  }
+
+  const modalSendApplication = () => {    // modal save mode 1
     updateApplicationStatus(currentApplication.Id, 'На рассмотрении')
       .then(result => {
         if (!result.result) {
           setModalTitle('Ошибка');
-          setModalText('Детали ошибки:');
-          setModalError(errorMatching(result.response?.Message!));
+          setModalText('Детали ошибки')
+          setModalError(result.response?.Message!);
           setModalVariant('');
-          setModalCanselText('Закрыть');
           setModalShow(true);
 
-          setIsLoaded(true);
-          
           return;
         }
 
-        navigate('/application');
+        setModalTitle('Запись отправлена');
+        setModalText('')
+        setModalError('');
+        setModalCanselText('');
+        setModalSaveText('');
+        setModalVariant('withProgress');
+        setModalHandleHideMode(2);
+        setModalShow(true);
       })
       .catch(error => {
         setModalTitle('Ошибка');
-        setModalText('Детали ошибки:');
-        setModalError(errorMatching(error));
+        setModalText('Детали ошибки')
+        setModalError(error);
         setModalVariant('');
-        setModalCanselText('Закрыть');
         setModalShow(true);
-
-        setIsLoaded(true);
       });
   }
+
+  // real delete
+  // const modalDeleteApplication = () => {    // modal save mode 2
+  //   deleteApplication(currentApplication.Id)
+  //     .then(result => {
+  //       if (!result.result) {
+  //         setModalTitle('Ошибка');
+  //         setModalText('Детали ошибки')
+  //         setModalError(result.response?.Message!);
+  //         setModalVariant('');
+  //         setModalShow(true);
+
+  //         return;
+  //       }
+
+  //       setModalTitle('Запись удалена');
+  //       setModalText('')
+  //       setModalError('');
+  //       setModalCanselText('');
+  //       setModalSaveText('');
+  //       setModalVariant('withProgress');
+  //       setModalShow(true);
+  //       setModalHandleHideMode(2);
+  //     })
+  //     .catch(error => {
+  //       setModalTitle('Ошибка');
+  //       setModalText('Детали ошибки')
+  //       setModalError(error);
+  //       setModalVariant('');
+  //       setModalShow(true);
+  //     });
+  // }
+
+  const modalDeleteApplication = () => {    // modal save mode 2
+    updateApplicationStatus(currentApplication.Id, 'Удалена')
+      .then(result => {
+        if (!result.result) {
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalError(result.response?.Message!);
+          setModalVariant('');
+          setModalShow(true);
+
+          return;
+        }
+
+        setModalTitle('Запись удалена');
+        setModalText('')
+        setModalError('');
+        setModalCanselText('');
+        setModalSaveText('');
+        setModalVariant('withProgress');
+        setModalShow(true);
+        setModalHandleHideMode(2);
+      })
+      .catch(error => {
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки')
+        setModalError(error);
+        setModalVariant('');
+        setModalShow(true);
+      });
+  }
+
 
   const modalHideDefault = () => {   // modal hide mode 1
     setModalTitle('');
@@ -85,6 +180,19 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
     setModalHandleHideMode(null);
     setModalShow(false);
     navigate('/application');
+  }
+
+  const modalHideReload = () => {   // modal hide mode 3
+    setModalTitle('');
+    setModalText('');
+    setModalError('');
+    setModalVariant('');
+    setModalCanselText('');
+    setModalSaveText('');
+    setModalShow(false);
+    setModalHandleSaveMode(null);
+    setModalHandleHideMode(null);
+    window.location.reload();
   }
 
   useEffect(() => {
@@ -160,10 +268,25 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
             case 2: 
               modalHideGotoApplications();
               break;
+            case 3:
+              modalHideReload();
+              break;
             default:
               modalHideDefault();
+              break;
           }
-          
+        }}
+        handleSave={() => {
+          switch (modalHandleSaveMode) {
+            case 1:
+              modalSendApplication();
+              break;
+            case 2: 
+              modalDeleteApplication();
+              break;
+            default:
+              break;
+          }
         }}
       />
     );
@@ -173,25 +296,28 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
     <div className="application-page">
       <Form as={Row} xs={12} sm={8} md={4} lg={3}
       style={{ marginRight: 0 }}
-      className={``}
+      className="application-page__data"
       >
         <Form.Group as={Col} xs={3} sm={3} md={3} lg={3} 
-        className="applications-feed__ruler">
+        className="applications-page__ruler">
           <Form.Label column>
             Правитель
           </Form.Label>
-          <Col className="applications-feed__textcontent">
+          <Col className="applications-page__textcontent">
             <Form.Control className="text-base1-medium"
-            plaintext readOnly={ currentApplication.State === 'В разработке' ? false : true}
-            defaultValue={currentApplication.Ruler} />
+            placeholder="Введите правителя"
+            defaultValue={ currentApplication.Ruler ? currentApplication.Ruler : ''}
+            plaintext={ currentApplication.State === 'В разработке' ? false : true}
+            readOnly={ currentApplication.State === 'В разработке' ? false : true}
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Col} xs={4} sm={4} md={4} lg={4} 
-        className="applications-feed__state_and_check">
+        className="applications-page__state_and_check">
           <Form.Label column>
             Статус записи
           </Form.Label>
-          <Col className="applications-feed__textcontent">
+          <Col className="applications-page__textcontent">
             { isModerator ? (
               <ApplicationStatusSelector />
             ) : (
@@ -202,7 +328,7 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
           <Form.Label column>
             Проверка
           </Form.Label>
-          <Col className="applications-feed__textcontent">
+          <Col className="applications-page__textcontent">
             <Form.Control className="text-base1-medium"
             plaintext readOnly 
             defaultValue={ currentApplication.Check ? 
@@ -210,38 +336,57 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
             'Заявка не подтверждена'} />
           </Col>
         </Form.Group>
-        <Form.Group as={Col} xs={5} sm={5} md={5} lg={5} 
-        className="applications-feed__dates">
-          <Form.Label column className="applications-feed__dates_create">
+        <Form.Group as={Col} xs={3} sm={3} md={3} lg={3} 
+        className="applications-page__dates">
+          <Form.Label column className="applications-page__dates_create">
             Дата создания
           </Form.Label>
-          <Col className="applications-feed__textcontent">
+          <Col className="applications-page__textcontent">
             <Form.Control className="text-base1-medium"
             plaintext readOnly 
             defaultValue={currentApplication.DateCreate.toString().split('T')[0]} />
           </Col>
-          <Form.Label column className="applications-feed__dates_send">
+          <Form.Label column className="applications-page__dates_send">
             Дата оформления
           </Form.Label>
-          <Col className="applications-feed__textcontent">
+          <Col className="applications-page__textcontent">
             <Form.Control className="text-base1-medium"
             plaintext readOnly 
             defaultValue={ currentApplication.DateSend.toString().split('T')[0] === '0001-01-01' ?
             'Запись еще не отправлена' : currentApplication.DateSend.toString().split('T')[0] } />
           </Col>
-          <Form.Label column className="applications-feed__dates_complete">
+          <Form.Label column className="applications-page__dates_complete">
             Дата принятия решения
           </Form.Label>
-          <Col className="applications-feed__textcontent">
+          <Col className="applications-page__textcontent">
             <Form.Control className="text-base1-medium"
             plaintext readOnly 
             defaultValue={ currentApplication.DateComplete.toString().split('T')[0] === '0001-01-01' ?
             'Запись еще не проверена' : currentApplication.DateComplete.toString().split('T')[0] } />
           </Col>
         </Form.Group>
-      </Form>  
-      <Row style={{justifyContent: 'center', marginRight: 0}} >
-        {currentApplication.KingdomsWithTerm?.map((kingdomWithTerm: KingdomWithTerm) => (
+        <Form.Group as={Col} xs={2} sm={2} md={2} lg={2} 
+        className="application-page__btns">
+        { currentApplication.State === 'В разработке' ? (
+          <div className="application-page__send_and_save">
+            <Button onClick={() => checkAndSendApplication()}>
+              Отправить
+            </Button>
+            <Button variant="success" onClick={() => saveApplication()}>
+              Сохранить
+            </Button>
+          </div>
+          ) : (<></>) 
+        }
+          <Button variant="danger" onClick={() => checkAndDeleteApplication()}>
+            Удалить
+          </Button>
+        </Form.Group>
+      </Form>
+      <div className="application-page__data-padding" />
+      <Row className="application-page__kingdoms">
+        { currentApplication.KingdomsWithTerm ? (
+        currentApplication.KingdomsWithTerm?.map((kingdomWithTerm: KingdomWithTerm) => (
           <KingdomItem 
           key={kingdomWithTerm.Kingdom.Id}
           kingdom={kingdomWithTerm.Kingdom}
@@ -250,11 +395,19 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
           applicationDateTo={kingdomWithTerm.To}
           disabled={ currentApplication.State === 'В разработке' ? false : true }
           />              
-        ))}
+        ))
+      ):(
+      <span className="application-page__no_kingdoms">
+        <span className="application-page__no_kingdoms-span text-h2-medium">
+          В заявке пока нет княжеств
+        </span>
+        <Button className="application-page__no_kingdoms-btn" variant="info"
+        onClick={() => navigate('/kingdom')}>
+          Добавить
+        </Button>
+      </span>
+      )}
       </Row>
-      <Button onClick={() => sendApplication()}>
-        Отправить
-      </Button>
     </div>
   )
 }

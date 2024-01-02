@@ -10,7 +10,8 @@ import { ClearStore,
   AddKingdomToApplication,
   DeleteApplicationToCreate,
   DeleteKingdomFromApplication,
-  UpdateApplicationStatus } from "../stores/ApplicationStore";
+  UpdateApplicationStatus,
+  DeleteApplication } from "../stores/ApplicationStore";
 import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
 import { KingdomWithTerm, Kingdom } from "../Interfaces/dataStructures/KingdomInterface";
 import { ApplicationApi } from "../utils/api/ApplicationApi/ApplicationApi";
@@ -154,7 +155,6 @@ export function useApplication() {
 
         return { result: true, response }
       } else if (response.Status === 'error') {  // case error
-        // dispatch(DeleteApplicationToCreate());
 
         return { result: false, response }
       } else {  // case no connect to server
@@ -355,6 +355,40 @@ export function useApplication() {
     }
   }
 
+  const deleteApplication = async (applicationId: Number) => {
+    try {
+      const response = await applicationsApi.deleteApplication(applicationId);
+      if (response.Status === 'ok') {   // case successful
+        dispatch(DeleteApplication(applicationId));
+
+        return { result: true, response }
+      } else if (response.Status === 'error') {  // case error
+
+        return { result: false, response }
+      } else {  // case no connect to server
+        const response: ResponseDefault = {
+          Code: 503,
+          Status: 'error',
+          Message: 'Нет связи с сервером',
+          Body: null,
+        }
+        
+        return { result: false, response};
+      } 
+    } catch (error: any) {
+      console.log(error)
+
+      const response: ResponseDefault = {
+        Code: 418,
+        Status: 'undefined error',
+        Message: error,
+        Body: null,
+      }
+
+      return { result: false, response };
+    }
+  }
+
   const debounce = (func: any, delay: number) => {
     let timeoutId: any;
     return function (...args: any[]): Promise<{ result: boolean; response: ResponseDefault; }> {
@@ -422,5 +456,6 @@ export function useApplication() {
     deleteKingdomFromApplication,
     updateApplicationStatus,
     createApplication,
+    deleteApplication,
   };
 }

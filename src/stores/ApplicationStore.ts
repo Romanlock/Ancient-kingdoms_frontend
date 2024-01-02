@@ -83,6 +83,14 @@ export const ApplicationSlice = createSlice({
       state.applicationToCreate = null;
       state.applicationToCreateKingdomsCount = 0;
     },
+    DeleteApplication: (state, action: PayloadAction<Number>) => {
+      state.applications = state.applications.filter((application: Application) => {
+        if (application.Id !== action.payload) {
+          return application;
+        }
+      })
+      state.applicationsCount = state.applications.length;
+    }
   }
 });
 
@@ -98,4 +106,5 @@ export const {
   DeleteApplicationToCreate,
   DeleteKingdomFromApplication,
   UpdateApplicationStatus,
+  DeleteApplication,
 } = ApplicationSlice.actions;

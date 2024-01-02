@@ -38,7 +38,7 @@ const MyModal: React.FC<MyModalProps> = (props) => {
         count -= 0.1;
         setProgress((count / 2) * 100);
 
-        if (count <= 0.1) {
+        if (count <= 0.0) {
           resetProgress();
           props.onHide();
         }

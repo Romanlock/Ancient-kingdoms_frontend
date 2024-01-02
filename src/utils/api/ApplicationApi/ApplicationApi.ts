@@ -24,6 +24,7 @@ export class ApplicationApi {
       { name: 'addKingdomToApplication', url: '/api/application/add_kingdom' },
       { name: 'deleteKingdomFromApplication', url: '/api/application/delete_kingdom' },
       { name: 'createApplication', url: '/api/application/create' },
+      { name: 'deleteApplication', url: '/api/application/delete' },
     ];
   }
 
@@ -207,4 +208,34 @@ export class ApplicationApi {
           return error.response.data;
         });
   }
+
+  deleteApplication = async (applicationId: Number): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'deleteApplication');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для deleteApplication');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    const body = {
+      Id: applicationId,
+    }
+
+    return axios.delete(
+      configItem.url,
+      {
+        data: body,
+        headers,
+      }
+      )
+        .then((res) => {
+          return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
 }
