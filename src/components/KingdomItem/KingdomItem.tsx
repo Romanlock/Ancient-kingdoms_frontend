@@ -35,6 +35,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
   const { applicationToCreate,
     createApplication,
     addKingdomToApplication, 
+    updateKingdomFromApplication,
     deleteKingdomFromApplication } = useApplication();
 
   const { isAuthorized } = useAuth();
@@ -147,6 +148,80 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
           setModalShow(true);
         });
     }
+  }
+
+  const modalUpdateKingdomFromApplication = () => {
+    if (!dateFrom) {
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Выберите дату начала правления');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalShow(true);   
+
+      return;
+    }
+
+    if (!dateTo) {
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Выберите дату окончания правления');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalShow(true);
+
+      return;
+    }
+
+    if (dateFrom >= dateTo) {
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Выберите корректные даты правления');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalShow(true);
+      
+      return;
+    }
+
+    console.log( )
+
+    if ( dateFrom.getTime() === parseISO(applicationDateFrom!.toString()).getTime() &&
+      dateTo.getTime() === parseISO(applicationDateTo!.toString()).getTime() ) {
+      return;
+    }
+    
+
+    updateKingdomFromApplication(dateFrom, dateTo, kingdom)
+      .then(result => {
+        if (!result.result) {
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalError(result.response?.Message!);
+          setModalCanselText('Закрыть');
+          setModalVariant('');
+          setModalShow(true);
+
+          return;
+        }
+
+        setModalTitle('Успех');
+        setModalText('Новые сроки успешно сохранены')
+        setModalError('');
+        setModalCanselText('');
+        setModalSaveText('');
+        setModalVariant('withProgress');
+        setModalShow(true);
+        setModalHandleHideMode(1);
+      })
+      .catch(error => {
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки')
+        setModalError(error);
+        setModalCanselText('Закрыть');
+        setModalVariant('');
+        setModalShow(true);
+      });
   }
 
   const checkAndDeleteKingdom = () => {
@@ -335,7 +410,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
                     <Button 
                       onClick={e => {
                         e.stopPropagation();
-                        checkAndAddKingdomToApplication();
+                        modalUpdateKingdomFromApplication();
                       }}>
                       Сохранить новые сроки
                     </Button>

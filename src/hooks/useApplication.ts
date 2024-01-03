@@ -12,6 +12,7 @@ import { ClearStore,
   DeleteKingdomFromApplication,
   UpdateApplicationStatus,
   UpdateApplicationRuler,
+  UpdateKingdomFromApplication,
   DeleteApplication } from "../stores/ApplicationStore";
 import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
 import { KingdomWithTerm, Kingdom } from "../Interfaces/dataStructures/KingdomInterface";
@@ -392,7 +393,7 @@ export function useApplication() {
 
   const updateApplicationRuler = async (applicationId: Number, ruler: string) => {
     try {
-      const response = await applicationsApi.updateApplication(applicationId, ruler);
+      const response = await applicationsApi.updateApplicationRuler(applicationId, ruler);
       if (response.Status === 'ok') {   // case successful
         dispatch(UpdateApplicationRuler(ruler));
 
@@ -422,6 +423,47 @@ export function useApplication() {
       return { result: false, response };
     }
   }
+
+  const updateKingdomFromApplication = async (dateFrom: Date, dateTo: Date, kingdom: Kingdom) => {     
+    try {
+      const response = await applicationsApi.updateKingdomFromApplication(applicationToCreate.Id,
+        dateFrom, dateTo, kingdom.Id);
+      if (response.Status === 'ok') {   // case successful
+        const kingdomWithTerm: KingdomWithTerm = {
+          Kingdom: kingdom,
+          From: dateFrom,
+          To: dateTo,
+        }
+
+        dispatch(UpdateKingdomFromApplication(kingdomWithTerm));
+
+        return { result: true, response }
+      } else if (response.Status === 'error') {  // case error
+
+        return { result: false, response }
+      } else {  // case no connect to server
+        const response: ResponseDefault = {
+          Code: 503,
+          Status: 'error',
+          Message: 'Нет связи с сервером',
+          Body: null,
+        }
+        
+        return { result: false, response };
+      } 
+    } catch (error: any) {
+      console.log(error)
+      const response: ResponseDefault = {
+        Code: 418,
+        Status: 'undefined error',
+        Message: error,
+        Body: null,
+      }
+
+      return { result: false, response };
+    }
+  }
+
 
   const debounce = (func: any, delay: number) => {
     let timeoutId: any;
@@ -490,6 +532,7 @@ export function useApplication() {
     deleteKingdomFromApplication,
     updateApplicationStatus,
     updateApplicationRuler,
+    updateKingdomFromApplication,
     createApplication,
     deleteApplication,
   };

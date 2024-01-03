@@ -97,7 +97,24 @@ export const ApplicationSlice = createSlice({
         }
       })
       state.applicationsCount = state.applications.length;
-    }
+    },
+    UpdateKingdomFromApplication: (state, action: PayloadAction<KingdomWithTerm>) => {
+      const nestedApplication = state.applicationToCreate?.KingdomsWithTerm.find(
+        kingdom => kingdom.Kingdom.Id === action.payload.Kingdom.Id
+      );
+    
+      if (!nestedApplication) return;
+    
+      state.applicationToCreate!.KingdomsWithTerm = state.applicationToCreate!.KingdomsWithTerm.map(
+        kingdom => {
+          if (kingdom.Kingdom.Id === nestedApplication.Kingdom.Id) {
+            return nestedApplication;
+          }
+          return kingdom;
+        }
+      );
+    },
+    
   }
 });
 
@@ -114,5 +131,6 @@ export const {
   DeleteKingdomFromApplication,
   UpdateApplicationStatus,
   UpdateApplicationRuler,
+  UpdateKingdomFromApplication,
   DeleteApplication,
 } = ApplicationSlice.actions;

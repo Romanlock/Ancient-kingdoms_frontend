@@ -26,7 +26,8 @@ export class ApplicationApi {
       { name: 'deleteKingdomFromApplication', url: '/api/application/delete_kingdom' },
       { name: 'createApplication', url: '/api/application/create' },
       { name: 'deleteApplication', url: '/api/application/delete' },
-      { name: 'updateApplication', url: '/api/application/update' },
+      { name: 'updateApplicationRuler', url: '/api/application/update' },
+      { name: 'updateKingdomFromApplication', url: '/api/application/update_kingdom' },
     ];
   }
 
@@ -240,10 +241,10 @@ export class ApplicationApi {
         });
   }
 
-  updateApplication = async (id: Number, ruler: string): Promise<ResponseDefault> => {
-    const configItem = this.config.find((item) => item.name === 'updateApplication');
+  updateApplicationRuler = async (id: Number, ruler: string): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'updateApplicationRuler');
     if (!configItem) {
-      throw new Error('Не найдена конфигурация для updateApplication');
+      throw new Error('Не найдена конфигурация для updateApplicationRuler');
     }
 
     const headers = {
@@ -270,4 +271,36 @@ export class ApplicationApi {
         });
   }
 
+  updateKingdomFromApplication = async (applicationId: Number, dateFrom: Date,
+    dateTo: Date, kingdomId: Number): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'updateKingdomFromApplication');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для updateKingdomFromApplication');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    const body: AddKingdomToApplicationRequest = {
+      ApplicationId: applicationId,
+      KingdomId: kingdomId,
+      From: dateFrom,
+      To: dateTo,
+    }
+
+    return axios.put(
+      configItem.url,
+      body, 
+      {
+        headers,
+      },
+      )
+        .then((res) => {
+          return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
 }
