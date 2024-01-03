@@ -39,8 +39,8 @@ const ApplicationFeed: React.FC = () => {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
           setModalError(errorMatching(result.response?.Message!));
-          setModalVariant('');
           setModalCanselText('Закрыть');
+          setModalVariant('');
           setModalShow(true);
 
           setIsLoaded(true);
@@ -54,8 +54,8 @@ const ApplicationFeed: React.FC = () => {
         setModalTitle('Ошибка');
         setModalText('Детали ошибки:');
         setModalError(errorMatching(error));
-        setModalVariant('');
         setModalCanselText('Закрыть');
+        setModalVariant('');
         setModalShow(true);
 
         setIsLoaded(true);

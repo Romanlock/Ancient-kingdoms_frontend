@@ -78,10 +78,17 @@ export const ApplicationSlice = createSlice({
     },
     UpdateApplicationStatus: (state) => {
       if (!(state.applicationToCreate)) return;
+
       state.applicationToCreate.State = 'На рассмотрении';
       state.applications.push(state.applicationToCreate);
       state.applicationToCreate = null;
       state.applicationToCreateKingdomsCount = 0;
+    },
+    UpdateApplicationRuler: (state, action: PayloadAction<string>) => {
+      if (!(state.applicationToCreate && state.currentApplication)) return;
+      
+      state.applicationToCreate.Ruler = action.payload;
+      state.currentApplication.Ruler = action.payload;
     },
     DeleteApplication: (state, action: PayloadAction<Number>) => {
       state.applications = state.applications.filter((application: Application) => {
@@ -106,5 +113,6 @@ export const {
   DeleteApplicationToCreate,
   DeleteKingdomFromApplication,
   UpdateApplicationStatus,
+  UpdateApplicationRuler,
   DeleteApplication,
 } = ApplicationSlice.actions;

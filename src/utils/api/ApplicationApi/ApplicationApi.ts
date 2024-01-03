@@ -3,7 +3,8 @@ import { Application } from "../../../Interfaces/dataStructures/ApplicationInter
 import { ApplicationStatusRequest, 
   AddKingdomToApplicationRequest,
   DeleteKingdomFromApplicationRequest, 
-  CreateApplicationAndAddKingdom} from "./ApplicationRequestInterfaces";
+  CreateApplicationAndAddKingdom,
+  ApplicationRulerRequest} from "./ApplicationRequestInterfaces";
 import { ResponseDefault } from "../ResponseInterface";
 
 export class ApplicationApi {
@@ -25,6 +26,7 @@ export class ApplicationApi {
       { name: 'deleteKingdomFromApplication', url: '/api/application/delete_kingdom' },
       { name: 'createApplication', url: '/api/application/create' },
       { name: 'deleteApplication', url: '/api/application/delete' },
+      { name: 'updateApplication', url: '/api/application/update' },
     ];
   }
 
@@ -229,6 +231,36 @@ export class ApplicationApi {
         data: body,
         headers,
       }
+      )
+        .then((res) => {
+          return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
+  updateApplication = async (id: Number, ruler: string): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'updateApplication');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для updateApplication');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    const body: ApplicationRulerRequest = {
+      Id: id,
+      Ruler: ruler,
+    }
+
+    return axios.put(
+      configItem.url,
+      body, 
+      {
+        headers,
+      },
       )
         .then((res) => {
           return  res.data;

@@ -3,6 +3,11 @@ export interface ApplicationStatusRequest {
   State: string,
 }
 
+export interface ApplicationRulerRequest {
+  Id: Number,
+  Ruler: string,
+}
+
 export interface AddKingdomToApplicationRequest {
   ApplicationId: Number,
   KingdomId: Number,

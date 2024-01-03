@@ -121,7 +121,6 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
     } else {
       addKingdomToApplication(dateFrom, dateTo, kingdom)
         .then(result => {
-          console.log(result)
           if (!result.result) {
             setModalTitle('Ошибка');
             setModalText('Детали ошибки')
@@ -168,6 +167,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
           setModalTitle('Ошибка');
           setModalText('Детали ошибки')
           setModalError(result.response?.Message!);
+          setModalCanselText('Закрыть');
           setModalVariant('');
           setModalShow(true);
 
@@ -187,6 +187,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
         setModalTitle('Ошибка');
         setModalText('Детали ошибки')
         setModalError(error);
+        setModalCanselText('Закрыть');
         setModalVariant('');
         setModalShow(true);
       });
@@ -227,12 +228,12 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
   };
 
   useEffect(() => {
-    if (inApplication && !disabled) {
+    // if (inApplication && !disabled) {
       if (applicationDateFrom && applicationDateTo) {
         setDateFrom(parseISO(applicationDateFrom!.toString()))
         setDateTo(parseISO(applicationDateTo!.toString()))
       }
-    }
+    // }
   }, [inApplication, disabled, applicationDateFrom, applicationDateTo]);
   
   if (modalShow) {

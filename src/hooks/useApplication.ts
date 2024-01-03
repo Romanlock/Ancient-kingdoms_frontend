@@ -11,6 +11,7 @@ import { ClearStore,
   DeleteApplicationToCreate,
   DeleteKingdomFromApplication,
   UpdateApplicationStatus,
+  UpdateApplicationRuler,
   DeleteApplication } from "../stores/ApplicationStore";
 import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
 import { KingdomWithTerm, Kingdom } from "../Interfaces/dataStructures/KingdomInterface";
@@ -389,6 +390,39 @@ export function useApplication() {
     }
   }
 
+  const updateApplicationRuler = async (applicationId: Number, ruler: string) => {
+    try {
+      const response = await applicationsApi.updateApplication(applicationId, ruler);
+      if (response.Status === 'ok') {   // case successful
+        dispatch(UpdateApplicationRuler(ruler));
+
+        return { result: true, response }
+      } else if (response.Status === 'error') {  // case error
+
+        return { result: false, response }
+      } else {  // case no connect to server
+        const response: ResponseDefault = {
+          Code: 503,
+          Status: 'error',
+          Message: 'Нет связи с сервером',
+          Body: null,
+        }
+        
+        return { result: false, response};
+      } 
+    } catch (error: any) {
+      console.log(error)
+      const response: ResponseDefault = {
+        Code: 418,
+        Status: 'undefined error',
+        Message: error,
+        Body: null,
+      }
+
+      return { result: false, response };
+    }
+  }
+
   const debounce = (func: any, delay: number) => {
     let timeoutId: any;
     return function (...args: any[]): Promise<{ result: boolean; response: ResponseDefault; }> {
@@ -455,6 +489,7 @@ export function useApplication() {
     addKingdomToApplication,
     deleteKingdomFromApplication,
     updateApplicationStatus,
+    updateApplicationRuler,
     createApplication,
     deleteApplication,
   };

@@ -25,6 +25,8 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   const [modalHandleSaveMode, setModalHandleSaveMode] = useState<Number | null>(null);
   const [modalHandleHideMode, setModalHandleHideMode] = useState<Number | null>(null);
 
+  const [rulerName, setRulerName] = useState<string | null>(null);
+
   const [isLoaded, setIsLoaded] = useState(false);
 
   const { setCurrentPage, deleteCurrentPage } = useApp();
@@ -33,17 +35,76 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
 
   const { setApplicationToCreate,
     currentApplication, 
+    applicationToCreate,
     setCurrentApplication,
     deleteCurrentApplication,
     updateApplicationStatus,
+    updateApplicationRuler,
     deleteApplication,
   } = useApplication();
 
   const saveApplication = () => {
-    
+    if (!rulerName) {
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Введите имя правителя');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalHandleHideMode(1);
+      setModalShow(true);
+
+      return;
+    }
+
+    if (rulerName === currentApplication.Ruler) return;
+
+    updateApplicationRuler(currentApplication.Id, rulerName)
+      .then(result => {
+        if (!result.result) {
+          setModalTitle('Ошибка');
+          setModalText('Детали ошибки')
+          setModalError(result.response?.Message!);
+          setModalCanselText('Закрыть');
+          setModalVariant('');
+          setModalHandleHideMode(1);
+          setModalShow(true);
+
+          return;
+        }
+
+        setModalTitle('Запись сохранена');
+        setModalText('')
+        setModalError('');
+        setModalCanselText('');
+        setModalSaveText('');
+        setModalVariant('withProgress');
+        setModalHandleHideMode(1);
+        setModalShow(true);
+      })
+      .catch(error => {
+        setModalTitle('Ошибка');
+        setModalText('Детали ошибки')
+        setModalError(error);
+        setModalCanselText('Закрыть');
+        setModalVariant('');
+        setModalHandleHideMode(1);
+        setModalShow(true);
+      });
   }
 
   const checkAndSendApplication = () => {
+    if (!rulerName) {
+      setModalTitle('Ошибка');
+      setModalText('Детали ошибки')
+      setModalError('Введите имя правителя');
+      setModalCanselText('Закрыть');
+      setModalVariant('');
+      setModalHandleHideMode(1);
+      setModalShow(true);
+
+      return;
+    }
+
     setModalTitle('Внимание');
     setModalText('Вы уверены, что хотите отправить запись?')
     setModalError('После отправки редактирование будет невозможно');
@@ -72,7 +133,9 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки')
           setModalError(result.response?.Message!);
-          setModalVariant('');
+        setModalCanselText('Закрыть');
+        setModalVariant('');
+          setModalHandleHideMode(2);
           setModalShow(true);
 
           return;
@@ -91,7 +154,9 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
         setModalTitle('Ошибка');
         setModalText('Детали ошибки')
         setModalError(error);
+        setModalCanselText('Закрыть');
         setModalVariant('');
+        setModalHandleHideMode(2);
         setModalShow(true);
       });
   }
@@ -135,7 +200,9 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки')
           setModalError(result.response?.Message!);
+          setModalCanselText('Закрыть');
           setModalVariant('');
+          setModalHandleHideMode(2);
           setModalShow(true);
 
           return;
@@ -147,14 +214,16 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
         setModalCanselText('');
         setModalSaveText('');
         setModalVariant('withProgress');
-        setModalShow(true);
         setModalHandleHideMode(2);
+        setModalShow(true);
       })
       .catch(error => {
         setModalTitle('Ошибка');
         setModalText('Детали ошибки')
         setModalError(error);
+        setModalCanselText('Закрыть');
         setModalVariant('');
+        setModalHandleHideMode(2);
         setModalShow(true);
       });
   }
@@ -196,7 +265,15 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
   }
 
   useEffect(() => {
-    setCurrentPage('Просмотр записи');
+    if (currentApplication?.Id == applicationToCreate?.Id) {
+      setCurrentPage('Создание записи');
+    } else {
+      setCurrentPage('Просмотр записи');
+    }
+    setRulerName(currentApplication?.Ruler);
+  }, [currentApplication])
+
+  useEffect(() => {
 
     if (!/^\d+$/.test(id!)) {
       setModalTitle('Ошибка');
@@ -224,21 +301,23 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
 
             return;
           }
-          
+
           setIsLoaded(true);
         })
         .catch(error => {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
           setModalError(errorMatching(error));
-          setModalVariant('');
           setModalCanselText('Закрыть');
+          setModalVariant('');
           setModalHandleHideMode(2);
           setModalShow(true);
 
           setIsLoaded(true);
         });
     }
+
+    
 
     return () => {
       deleteCurrentApplication();
@@ -309,6 +388,7 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
             defaultValue={ currentApplication.Ruler ? currentApplication.Ruler : ''}
             plaintext={ currentApplication.State === 'В разработке' ? false : true}
             readOnly={ currentApplication.State === 'В разработке' ? false : true}
+            onChange={event => setRulerName(event.target.value)}
             />
           </Col>
         </Form.Group>
@@ -394,7 +474,7 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
           applicationDateFrom={kingdomWithTerm.From}
           applicationDateTo={kingdomWithTerm.To}
           disabled={ currentApplication.State === 'В разработке' ? false : true }
-          />              
+          />    
         ))
       ):(
       <span className="application-page__no_kingdoms">
