@@ -354,14 +354,14 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
     <Col xs={12} sm={8} md={4} lg={3} 
     className={`feed-kingdom feed-kingdom__kingdom-${kingdom.Id} m-1 p-1`}>
       <Col onClick={() => navigate(`/kingdom/${kingdom.Id}`)}>
-        <div className="feed-kingdom__kingdom_title">
-          <div className="feed-kingdom__kingdom_title-text text-h2-medium" style={{textAlign: 'center'}}>{kingdom.Name}</div>
+        <div className="feed-kingdom__kingdom_title mb-3">
+          <div className="feed-kingdom__kingdom_title-text text-h2-medium">{kingdom.Name}</div>
         </div>
-        <div className="feed-kingdom__kingdom_img p-1">
+        <div className="feed-kingdom__kingdom_img p-1 mb-3">
           <img src={kingdom.Image} alt={kingdom.Name} className="w-100" />
         </div>
         <div 
-          className="feed-kingdom__kingdom_btns"
+          className="feed-kingdom__kingdom_btns mb-1"
           onClick={(e) => e.stopPropagation()}
         >
           { !inApplication ? (  // case open from feed
@@ -372,7 +372,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
                     e.stopPropagation();
                     checkAndAddKingdomToApplication();
                   }}>
-                  Добавить в заявку
+                  Добавить в запись
                 </Button>
               </Row>
               <Row>
@@ -428,7 +428,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
                       locale={ru}
                     />
                   </Row>
-                  <Row>
+                  <Row className="mt-3">
                     <Button variant="danger" 
                       onClick={e => {
                         e.stopPropagation();

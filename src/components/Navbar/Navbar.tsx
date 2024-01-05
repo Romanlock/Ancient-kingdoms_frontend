@@ -105,47 +105,46 @@ function NavbarUser() {
 
  return (
   <div>
-    <Navbar expand="lg" className="bg-body-tertiary d-flex justify-content-between" fixed='top'>
-      <Breadcrumbs />
-      <span className='text-h2-medium'>{currentPage}</span>
-      <Container style={{ width: 'min-content', marginRight: '5%' }}>
-        <Navbar.Brand 
-        style={{cursor: 'pointer'}}
-        onClick={() => navigate('/kingdom')}>
-          ARK
+    <Navbar expand="lg" fixed='top'
+    className="navbar bg-body-tertiary d-flex justify-content-between">
+      <Container className='navbar-elements'>
+        <Navbar.Brand className='navbar-logo text-h2-medium'
+          onClick={() => navigate('/kingdom')}>
+            ARK
         </Navbar.Brand>
+        <Breadcrumbs />
+        <span className='text-h2-medium'>{currentPage}</span>
+        
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         { isAuthorized ? (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link style={{ whiteSpace: 'nowrap' }}
+              <Nav.Link className='navbar__item text-base2-medium'
               onClick={() => checkApplicationToCreate()}>
                 Создать запись { applicationToCreateKingdomsCount > 0 ? 
                 applicationToCreateKingdomsCount : 
                 <div /> }
               </Nav.Link>
-              <Nav.Link style={{ whiteSpace: 'nowrap' }}
+              <Nav.Link className='navbar__item text-base2-medium'
               onClick={() => navigate('/application')}>
                 Мои записи { applicationsCount > 0 ? 
                 applicationsCount : 
                 <div /> }
               </Nav.Link>
               { isModerator ? (
-                <div>
-                  <Nav.Link style={{ whiteSpace: 'nowrap' }}>
-                    Изменить княжества
+                <>
+                  <Nav.Link className='navbar__item text-base2-medium'>
+                    Все записи
                   </Nav.Link>
-                  <Nav.Link style={{ whiteSpace: 'nowrap' }}>
-                    Добавить княжество
+                  <Nav.Link className='navbar__item text-base2-medium'>
+                    Все княжества
                   </Nav.Link>
-                </div>
-
+                </>
               ) :(
                 <></>
               )}
-              
-              <NavDropdown title={user.Name} id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={ () => {
+              <NavDropdown className='navbar__item text-base2-medium' title={user.Name} id="basic-nav-dropdown">
+                <NavDropdown.Item style={{all: 'unset'}} onClick={ () => {
                   logout()
                     .then(() => {
                       navigate('/login');
@@ -167,12 +166,13 @@ function NavbarUser() {
           </Navbar.Collapse>
         ) : (
           <Nav className="me-auto">
-            <Nav.Link onClick={() => navigate('/login')} style={{ whiteSpace: 'nowrap' }}>Войти</Nav.Link>
+            <Nav.Link className='navbar__item text-base2-medium'
+            onClick={() => navigate('/login')}>Войти</Nav.Link>
           </Nav>
         )}
       </Container>
     </Navbar>
-    <div className='content' style={{marginTop: 56}} />
+    <div className='navbar-padding'/>
   </div>
  );
 }

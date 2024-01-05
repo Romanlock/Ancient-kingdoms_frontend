@@ -2,11 +2,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid black;
+  border: 2px solid var(--border-main);
   border-radius: 6px;
   cursor: pointer;
+  background-color: var(--background-main);
 }
 
 .feed-kingdom__kingdom_title {
   height: 120px;
+}
+
+.feed-kingdom__kingdom_title-text {
+  text-align: center;
+}
+
+.feed-kingdom__kingdom_btns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }

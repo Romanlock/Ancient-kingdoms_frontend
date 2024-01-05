@@ -5,26 +5,24 @@ function SignupCarousel() {
   return (
     <Carousel>
       <Carousel.Item>
-        <Image src='/src/assets/img/login_img.jpeg' className='signup_carousel-img' />
+        <Image src='/src/assets/img/login/login_img0.jpg' className='signup_carousel-img' />
         <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+          <h3>Ancient Russian kingdoms</h3>
+          <p>Все древнерусские княжества здесь</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <Image src='/src/assets/img/login_img.jpeg' className='signup_carousel-img' />
+        <Image src='/src/assets/img/login/login_img1.jpeg' className='signup_carousel-img' />
         <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <h3>Ancient Russian kingdoms</h3>
+          <p>Задокументируй этот период истории</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <Image src='/src/assets/img/login_img.jpeg' className='signup_carousel-img' />
+        <Image src='/src/assets/img/login/login_img2.jpg' className='signup_carousel-img' />
         <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
+          <h3>Ancient Russian kingdoms</h3>
+          <p>Узнай, как все было</p>
         </Carousel.Caption>
       </Carousel.Item>
     </Carousel>
@@ -35,26 +33,24 @@ function LoginCarousel() {
   return (
     <Carousel>
       <Carousel.Item>
-        <Image src='/src/assets/img/login_img.jpeg' className='login_carousel-img' />
+        <Image src='/src/assets/img/login/login_img0.jpg' className='signup_carousel-img' />
         <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+          <h3>Ancient Russian kingdoms</h3>
+          <p>Все древнерусские княжества здесь</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <Image src='/src/assets/img/login_img.jpeg' className='login_carousel-img' />
+        <Image src='/src/assets/img/login/login_img1.jpeg' className='signup_carousel-img' />
         <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <h3>Ancient Russian kingdoms</h3>
+          <p>Задокументируй этот период истории</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <Image src='/src/assets/img/login_img.jpeg' className='login_carousel-img' />
+        <Image src='/src/assets/img/login/login_img2.jpg' className='signup_carousel-img' />
         <Carousel.Caption>
-          <h3>Third slide label</h3>
-          <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-          </p>
+          <h3>Ancient Russian kingdoms</h3>
+          <p>Узнай, как все было</p>
         </Carousel.Caption>
       </Carousel.Item>
     </Carousel>

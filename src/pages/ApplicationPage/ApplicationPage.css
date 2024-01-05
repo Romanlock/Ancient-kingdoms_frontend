@@ -4,8 +4,9 @@
   margin-right: 0px;
   position: fixed;
   width: -webkit-fill-available;
-  background: white;
+  background: var(--main-color);
   border-bottom: 2px solid black;
+  z-index: 1;
 }
 
 .application-page__data-padding {

@@ -1,3 +1,19 @@
+.kingdom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+
+  height: calc(100vh - 65px);
+}
+
+.kingdom-page__date {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .kingdom__title {
   display: flex;
   align-items: center;

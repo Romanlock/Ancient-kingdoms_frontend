@@ -88,13 +88,13 @@ const KingdomsFeed: React.FC = () => {
     <div className="kingdom-page">
       <div className="page">
         <div className="content">
-          <InputGroup className="mt-5">
-          <Form.Control
-            placeholder="Введите название королевства"
-            aria-label="Username"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
+          <InputGroup className="kingdom-page__search">
+            <Form.Control
+              placeholder="Введите название королевства"
+              aria-label="Username"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            />
           </InputGroup>
           <Container className="feed-kingdoms">
             <Row style={{justifyContent: 'center'}}>
