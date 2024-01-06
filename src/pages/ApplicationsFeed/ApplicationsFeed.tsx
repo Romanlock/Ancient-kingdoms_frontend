@@ -95,6 +95,7 @@ const ApplicationFeed: React.FC = () => {
               <ApplicationItem
               key={application.Id}
               application={application}
+              forModerator={false}
               />
             ))}
           </Col>

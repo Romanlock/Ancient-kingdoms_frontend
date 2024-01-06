@@ -9,5 +9,7 @@ export const nameMatching = (name: string): string =>
     ? 'Вход'
     : name === 'signup'
     ? 'Регистрация'
+    : name === 'application_moderator'
+    ? 'Записи пользователей'
     : name;
     

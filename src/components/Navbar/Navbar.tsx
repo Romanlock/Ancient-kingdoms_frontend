@@ -28,9 +28,12 @@ function NavbarUser() {
     applicationsCount, 
     applicationToCreate,
     applicationToCreateKingdomsCount,
+    applicationsAll,
+    applicationsAllCount,
     setApplications,
     setApplicationToCreate,
-    setCurrentApplication } = useApplication();
+    setCurrentApplication,
+    setApplicationsAll } = useApplication();
 
   const checkApplicationToCreate = () => {
     if (!applicationToCreate?.Id) {
@@ -82,11 +85,17 @@ function NavbarUser() {
   }
 
   useEffect(() => {
-    setApplications(null)
+    setApplications(null);
+    setApplicationsAll();
   }, [user])
 
   useEffect(() => {
-  }, [applications, applicationToCreate, applicationToCreateKingdomsCount, currentPage])
+  }, [applications, 
+    applicationToCreate, 
+    applicationToCreateKingdomsCount,
+    applicationsAll,
+    applicationsAllCount,
+    currentPage])
 
   if (modalShow) {
     return (
@@ -129,12 +138,14 @@ function NavbarUser() {
               onClick={() => navigate('/application')}>
                 Мои записи { applicationsCount > 0 ? 
                 applicationsCount : 
-                <div /> }
+                <></> }
               </Nav.Link>
               { isModerator ? (
                 <>
-                  <Nav.Link className='navbar__item text-base2-medium'>
-                    Все записи
+                  <Nav.Link onClick={() => navigate('/application_moderator')}
+                  className='navbar__item text-base2-medium'>
+                    Записи пользователей { applicationsAllCount > 0 ? 
+                    applicationsAllCount : <></> }
                   </Nav.Link>
                   <Nav.Link className='navbar__item text-base2-medium'>
                     Все княжества

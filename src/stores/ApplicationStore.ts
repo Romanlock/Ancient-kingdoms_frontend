@@ -5,7 +5,9 @@ import { KingdomWithTerm } from "../Interfaces/dataStructures/KingdomInterface";
 
 
 interface ApplicationState {
-  applications: Application[],  // все заявки
+  applicationsAll: Application[],
+  applicationsAllCount: number,
+  applications: Application[],  // все заявки пользователя
   currentApplication: Application | null,  // выбранная заявка (с княжествами)
   applicationToCreate: Application | null,  // заявка-черновик
   applicationsCount: number,
@@ -13,6 +15,8 @@ interface ApplicationState {
 }
 
 const initialState: ApplicationState = {
+  applicationsAll: [],
+  applicationsAllCount: 0,
   applications: [],
   currentApplication: null,
   applicationToCreate: null,
@@ -25,6 +29,8 @@ export const ApplicationSlice = createSlice({
   initialState,
   reducers: {
     ClearStore: (state) => {
+      state.applicationsAll = [],
+      state.applicationsAllCount = 0,
       state.applications = [],
       state.currentApplication = null,
       state.applicationToCreate = null,
@@ -114,6 +120,13 @@ export const ApplicationSlice = createSlice({
         }
       );
     },
+
+    // moderator reducers
+
+    SetApplicationsAll: (state, action: PayloadAction<Application[]>) => {
+      state.applicationsAll = action.payload;
+      state.applicationsAllCount = action.payload.length;
+    },
     
   }
 });
@@ -133,4 +146,6 @@ export const {
   UpdateApplicationRuler,
   UpdateKingdomFromApplication,
   DeleteApplication,
+  
+  SetApplicationsAll,
 } = ApplicationSlice.actions;

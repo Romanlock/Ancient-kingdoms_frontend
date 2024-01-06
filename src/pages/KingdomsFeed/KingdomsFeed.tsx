@@ -21,18 +21,29 @@ const KingdomsFeed: React.FC = () => {
 
   const [isLoaded, setIsLoaded] = useState(false); 
 
-  const [searchText, setSearchText] = useState('');
-
   const { kingdoms, setKingdoms } = useKingdom();
 
-  const { setCurrentPage, deleteCurrentPage } = useApp();
+  const { setCurrentPage, 
+    deleteCurrentPage,
+    kingdomFeedNameFilter,
+    setKingdomFeedNameFilter,
+    deleteKingdomFeedNameFilter,
+  } = useApp();
+
+  const handleKingdomNameFilterChange = (substring: string) => {
+    if (substring) {
+      return setKingdomFeedNameFilter(substring);
+    }
+
+    return deleteKingdomFeedNameFilter();
+  }
 
   useEffect(() => {
     setCurrentPage('Список княжеств');
   }, [])
 
   useEffect(() => {
-    setKingdoms(searchText)
+    setKingdoms(kingdomFeedNameFilter)
       .then(result => {
         if (!result.result) {
           setModalTitle('Ошибка');
@@ -63,7 +74,7 @@ const KingdomsFeed: React.FC = () => {
     return () => {
       deleteCurrentPage();
     }
-  }, [searchText]);
+  }, [kingdomFeedNameFilter]);
 
   if (!isLoaded) {
     return <Loader />;
@@ -92,8 +103,10 @@ const KingdomsFeed: React.FC = () => {
             <Form.Control
               placeholder="Введите название королевства"
               aria-label="Username"
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
+              value={kingdomFeedNameFilter ?
+                kingdomFeedNameFilter : ''
+              }
+              onChange={e => handleKingdomNameFilterChange(e.target.value)}
             />
           </InputGroup>
           <Container className="feed-kingdoms">

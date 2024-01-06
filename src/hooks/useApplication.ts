@@ -13,7 +13,8 @@ import { ClearStore,
   UpdateApplicationStatus,
   UpdateApplicationRuler,
   UpdateKingdomFromApplication,
-  DeleteApplication } from "../stores/ApplicationStore";
+  DeleteApplication,
+  SetApplicationsAll } from "../stores/ApplicationStore";
 import { Application } from "../Interfaces/dataStructures/ApplicationInterface";
 import { KingdomWithTerm, Kingdom } from "../Interfaces/dataStructures/KingdomInterface";
 import { ApplicationApi } from "../utils/api/ApplicationApi/ApplicationApi";
@@ -29,6 +30,8 @@ export function useApplication() {
       applicationToCreate,
       applicationsCount,
       applicationToCreateKingdomsCount,
+      applicationsAll,
+      applicationsAllCount,
   } = useSelector((store: any) => store.application);
 
   const dispatch = useDispatch();
@@ -487,6 +490,43 @@ export function useApplication() {
     };
   };  
 
+
+  // moderator functions
+
+  const setApplicationsAll = async () => {    
+    try {
+      const response = await applicationsApi.getAllApplications();
+      if (response.Status === 'ok') {   // case successful
+        dispatch(SetApplicationsAll(response.Body));
+
+        return { result: true, response };
+      } else if (response.Status === 'error') {  // case error
+
+        return { result: false, response }
+      } else {  // case no connect to server
+        const response: ResponseDefault = {
+          Code: 503,
+          Status: 'error',
+          Message: 'Нет связи с сервером',
+          Body: null,
+        }
+        
+        return { result: false, response };
+      } 
+    } catch (error: any) {
+      dispatch(ClearStore());
+
+      const response: ResponseDefault = {
+        Code: 418,
+        Status: 'undefined error',
+        Message: error,
+        Body: null,
+      }
+
+      return { result: false, response };
+    }
+  }
+
   const debounceTime = 1000;
 
   const debouncedSetApplications = useCallback(debounce(setApplications, debounceTime), [setApplications]);
@@ -522,6 +562,10 @@ export function useApplication() {
     applicationToCreate,
     applicationsCount,
     applicationToCreateKingdomsCount,
+
+    applicationsAll,
+    applicationsAllCount,
+    
     clearStore,
     setApplications,
     setCurrentApplication,
@@ -535,5 +579,8 @@ export function useApplication() {
     updateKingdomFromApplication,
     createApplication,
     deleteApplication,
+
+    setApplicationsAll,
+
   };
 }

@@ -28,6 +28,8 @@ export class ApplicationApi {
       { name: 'deleteApplication', url: '/api/application/delete' },
       { name: 'updateApplicationRuler', url: '/api/application/update' },
       { name: 'updateKingdomFromApplication', url: '/api/application/update_kingdom' },
+      // moderator paths
+      { name: 'getAllApplications', url: '/api/applications/all' },
     ];
   }
 
@@ -292,6 +294,30 @@ export class ApplicationApi {
     return axios.put(
       configItem.url,
       body, 
+      {
+        headers,
+      },
+      )
+        .then((res) => {
+          return  res.data;
+        })
+        .catch((error) => {
+          return error.response.data;
+        });
+  }
+
+  getAllApplications = async (): Promise<ResponseDefault> => {
+    const configItem = this.config.find((item) => item.name === 'getAllApplications');
+    if (!configItem) {
+      throw new Error('Не найдена конфигурация для getAllApplications');
+    }
+
+    const headers = {
+      credenlials: 'include',
+    }
+
+    return axios.get(
+      configItem.url, 
       {
         headers,
       },

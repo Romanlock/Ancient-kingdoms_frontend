@@ -7,7 +7,7 @@ import { useApplication } from "../../hooks/useApplication";
 import MyModal from "../../components/UI/Modal/Modal";
 import Loader from "../../components/UI/Loader/Loader";
 import KingdomItem from "../../components/KingdomItem/KingdomItem";
-import ApplicationStatusSelector from "../../components/UI/Selector/ApplicationStatusSelector";
+import {ApplicationStatusSelector} from "../../components/UI/Selector/ApplicationStatusSelector";
 import { useApp } from "../../hooks/useApp";
 import { errorMatching } from "../../utils/errorMatching/errorMatching";
 

@@ -1,0 +1,10 @@
+
+.moderator_applications_feed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.moderator_applications_feed__filters {
+  margin: 1rem;
+}

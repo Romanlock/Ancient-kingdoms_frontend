@@ -4,7 +4,8 @@ import { Application } from "../../Interfaces/dataStructures/ApplicationInterfac
 import { useNavigate } from "react-router-dom";
 
 
-const ApplicationItem: React.FC<{ application: Application }> = ({ application }) => {
+const ApplicationItem: React.FC<{ forModerator: boolean, application: Application }> = 
+({ forModerator, application }) => {
   const navigate = useNavigate();
 
   return (
@@ -22,6 +23,17 @@ const ApplicationItem: React.FC<{ application: Application }> = ({ application }
           plaintext readOnly defaultValue={ application.Ruler != '' ? 
           application.Ruler : 'Правитель не выбран' } />
         </Col>
+        { forModerator ? (
+          <>
+            <Form.Label column>
+              Пользователь
+            </Form.Label>
+            <Col className="applications-feed__textcontent">
+              <Form.Control className="text-base1-medium"
+              plaintext readOnly defaultValue={application.Creator.Name} />
+            </Col>
+          </>
+        ) : <></>}
       </Form.Group>
       <Form.Group as={Col} xs={4} sm={4} md={4} lg={4} 
       className="applications-feed__state_and_check">
