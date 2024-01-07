@@ -7,12 +7,11 @@ import { useApplication } from "../../hooks/useApplication";
 import MyModal from "../../components/UI/Modal/Modal";
 import Loader from "../../components/UI/Loader/Loader";
 import KingdomItem from "../../components/KingdomItem/KingdomItem";
-import {ApplicationStatusSelector} from "../../components/UI/Selector/ApplicationStatusSelector";
 import { useApp } from "../../hooks/useApp";
 import { errorMatching } from "../../utils/errorMatching/errorMatching";
 
 
-const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
+const ApplicationPage: React.FC = () => {
   const { id } = useParams();
 
   const [modalShow, setModalShow] = useState(false);
@@ -398,12 +397,8 @@ const ApplicationPage: React.FC<{isModerator: boolean}> = ({ isModerator }) => {
             Статус записи
           </Form.Label>
           <Col className="applications-page__textcontent">
-            { isModerator ? (
-              <ApplicationStatusSelector />
-            ) : (
-              <Form.Control className="text-base1-medium"
-              plaintext readOnly defaultValue={currentApplication.State} />
-            ) }
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly defaultValue={currentApplication.State} />
           </Col>
           <Form.Label column>
             Проверка

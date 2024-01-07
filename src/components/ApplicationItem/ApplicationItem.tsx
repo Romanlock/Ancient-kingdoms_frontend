@@ -2,11 +2,17 @@ import { Col, Row, Form } from "react-bootstrap";
 
 import { Application } from "../../Interfaces/dataStructures/ApplicationInterface";
 import { useNavigate } from "react-router-dom";
+import { ApplicationStatusSelector } from "../UI/Selector/ApplicationStatusSelector";
+import { useEffect } from "react";
 
 
 const ApplicationItem: React.FC<{ forModerator: boolean, application: Application }> = 
 ({ forModerator, application }) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+  }, [application])
 
   return (
     <Form as={Row} xs={12} sm={8} md={4} lg={3}
@@ -40,9 +46,20 @@ const ApplicationItem: React.FC<{ forModerator: boolean, application: Applicatio
         <Form.Label column>
           Статус записи
         </Form.Label>
-        <Col className="applications-feed__textcontent">
-          <Form.Control className="text-base1-medium"
-          plaintext readOnly defaultValue={application.State} />
+        <Col className="applications-feed__textcontent" 
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        }>
+          { forModerator ? (
+            <ApplicationStatusSelector 
+            applicationId={application.Id!} 
+            defaultValue={application.State}/>
+          ) : (
+            <Form.Control className="text-base1-medium"
+            plaintext readOnly defaultValue={application.State} />
+          ) }
         </Col>
         <Form.Label column>
           Проверка
@@ -50,7 +67,7 @@ const ApplicationItem: React.FC<{ forModerator: boolean, application: Applicatio
         <Col className="applications-feed__textcontent">
           <Form.Control className="text-base1-medium"
           plaintext readOnly 
-          defaultValue={ application.Check ? 'Заявка подтверждена' : 'Заявка не подтверждена'} />
+          value={ application.Check ? 'Заявка подтверждена' : 'Заявка не подтверждена'} />
         </Col>
       </Form.Group>
       <Form.Group as={Col} xs={5} sm={5} md={5} lg={5} 

@@ -86,7 +86,7 @@ function NavbarUser() {
 
   useEffect(() => {
     setApplications(null);
-    setApplicationsAll();
+    setApplicationsAll('', null, null);
   }, [user])
 
   useEffect(() => {

@@ -306,7 +306,7 @@ export class ApplicationApi {
         });
   }
 
-  getAllApplications = async (status: string, dateFrom: Date, dateTo: Date): 
+  getAllApplications = async (status: string, dateFrom: Date | null, dateTo: Date | null): 
     Promise<ResponseDefault> => {
 
     const configItem = this.config.find((item) => item.name === 'getAllApplications');

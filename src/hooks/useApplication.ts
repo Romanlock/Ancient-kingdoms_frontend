@@ -493,7 +493,7 @@ export function useApplication() {
 
   // moderator functions
 
-  const setApplicationsAll = async (status: string, dateFrom: Date, dateTo: Date) => {    
+  const setApplicationsAll = async (status: string, dateFrom: Date | null, dateTo: Date | null) => {    
     try {
       const response = await applicationsApi.getAllApplications(status, dateFrom, dateTo);
       if (response.Status === 'ok') {   // case successful

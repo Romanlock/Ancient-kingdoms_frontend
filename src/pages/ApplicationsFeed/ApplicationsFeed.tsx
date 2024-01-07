@@ -28,44 +28,56 @@ const ApplicationFeed: React.FC = () => {
 
   const { setCurrentPage, deleteCurrentPage } = useApp();
 
-  const reversedApplications = applications ? [...applications].reverse() : [];
+  const [reversedApplications, setReversedApplications] = useState<Application[]>([]);
 
   useEffect(() => {
     setCurrentPage('Мои записи');
 
-    setApplications(null)
-      .then(result => {
-        if (!result.result) {
+    const fetchData = () => {
+      setApplications(null)
+        .then(result => {
+          if (!result.result) {
+            setModalTitle('Ошибка');
+            setModalText('Детали ошибки:');
+            setModalError(errorMatching(result.response?.Message!));
+            setModalCanselText('Закрыть');
+            setModalVariant('');
+            setModalShow(true);
+  
+            setIsLoaded(true);
+  
+            return;
+          }
+  
+          setIsLoaded(true);
+        })
+        .catch(error => {
           setModalTitle('Ошибка');
           setModalText('Детали ошибки:');
-          setModalError(errorMatching(result.response?.Message!));
+          setModalError(errorMatching(error));
           setModalCanselText('Закрыть');
           setModalVariant('');
           setModalShow(true);
-
+  
           setIsLoaded(true);
+        })
+    };
 
-          return;
-        }
+    fetchData();
+  
+    const intervalId = setInterval(fetchData, 5000);
+  
+    return () => {
+      clearInterval(intervalId);
+      deleteCurrentPage();
+    }
+  }, []);
 
-        setIsLoaded(true);
-      })
-      .catch(error => {
-        setModalTitle('Ошибка');
-        setModalText('Детали ошибки:');
-        setModalError(errorMatching(error));
-        setModalCanselText('Закрыть');
-        setModalVariant('');
-        setModalShow(true);
-
-        setIsLoaded(true);
-      })
-
-      return () => {
-        deleteCurrentPage();
-      }
-
-  }, [])
+  useEffect(() => {
+    if (applications) {
+      setReversedApplications([...applications].reverse());
+    }
+  }, [applications])
 
   if (!isLoaded) {
     return <Loader />
