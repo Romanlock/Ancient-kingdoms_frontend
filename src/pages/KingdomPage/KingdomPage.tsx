@@ -305,7 +305,7 @@ const KingdomPage: React.FC = () => {
           </Button>
         </Col>
         { isModerator ? (
-          <Row>
+          <Row className="kingdom-page__buttons mb-5" style={{gap: '1rem'}}>
             <Button variant="danger">
               Удалить
             </Button>

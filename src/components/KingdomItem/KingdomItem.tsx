@@ -184,14 +184,11 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
       return;
     }
 
-    console.log( )
-
     if ( dateFrom.getTime() === parseISO(applicationDateFrom!.toString()).getTime() &&
       dateTo.getTime() === parseISO(applicationDateTo!.toString()).getTime() ) {
       return;
     }
     
-
     updateKingdomFromApplication(dateFrom, dateTo, kingdom)
       .then(result => {
         if (!result.result) {
@@ -366,7 +363,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
         >
           { !inApplication ? (  // case open from feed
             <div>
-              <Row>
+              <Row className="mb-2">
                 <Button 
                   onClick={e => {
                     e.stopPropagation();
@@ -375,7 +372,7 @@ const KingdomItem: React.FC<{ kingdom: Kingdom; inApplication: boolean, disabled
                   Добавить в запись
                 </Button>
               </Row>
-              <Row>
+              <Row className="mb-2">
                 <DatePicker
                   placeholderText="Выберите сроки"
                   selected={dateFrom}

@@ -8,3 +8,7 @@
 .moderator_applications_feed__filters {
   margin: 1rem;
 }
+
+.moderator_applications_feed__date_filter {
+  height: 38px;
+}

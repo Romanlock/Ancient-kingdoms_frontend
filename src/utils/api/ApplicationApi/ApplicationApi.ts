@@ -306,7 +306,9 @@ export class ApplicationApi {
         });
   }
 
-  getAllApplications = async (): Promise<ResponseDefault> => {
+  getAllApplications = async (status: string, dateFrom: Date, dateTo: Date): 
+    Promise<ResponseDefault> => {
+
     const configItem = this.config.find((item) => item.name === 'getAllApplications');
     if (!configItem) {
       throw new Error('Не найдена конфигурация для getAllApplications');
@@ -320,6 +322,11 @@ export class ApplicationApi {
       configItem.url, 
       {
         headers,
+        params: {
+          'Status': status,
+          'From': dateFrom,
+          'To': dateTo,
+        }
       },
       )
         .then((res) => {

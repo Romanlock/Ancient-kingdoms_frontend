@@ -1,6 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Row, Container, Col, InputGroup, Form } from "react-bootstrap";
+import { Row, Container, Col, InputGroup, Form, Button } from "react-bootstrap";
+
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import ru from 'date-fns/locale/ru'; 
 
 import Loader from "../../components/UI/Loader/Loader";
 import MyModal from "../../components/UI/Modal/Modal";
@@ -10,6 +14,10 @@ import { useApplication } from "../../hooks/useApplication";
 import { useApp } from "../../hooks/useApp";
 import { errorMatching } from "../../utils/errorMatching/errorMatching";
 import { ApplicationFeedStatusFilterSelector } from "../../components/UI/Selector/ApplicationStatusSelector";
+
+
+registerLocale('ru', ru);
+
 
 const ModeratorApplicationFeed: React.FC = () => {
   const [reversedApplications, setReversedApplications] = useState<Application[]>([]);
@@ -33,6 +41,13 @@ const ModeratorApplicationFeed: React.FC = () => {
     moderatorApplicationFeedUsernameFilter, 
     setModeratorApplicationFeedUsernameFilter,
     deleteModeratorApplicationFeedUsernameFilter,
+    moderatorApplicationFeedDateFromFilter,
+    moderatorApplicationFeedDateToFilter,
+    setModeratorApplicationFeedDateFromFilter,
+    deleteModeratorApplicationFeedDateFromFilter,
+    setModeratorApplicationFeedDateToFilter,
+    deleteModeratorApplicationFeedDateToFilter,
+    moderatorApplicationFeedStatusFilter,
   } = useApp();
 
   const handleUsernameFilterChange = (substring: string) => {
@@ -43,10 +58,36 @@ const ModeratorApplicationFeed: React.FC = () => {
     return deleteModeratorApplicationFeedUsernameFilter();
   }
 
+  const handleDateChange = (dates: [Date | null, Date |null]) => {
+    const [dateFrom, dateTo] = dates;
+    switch (true) {
+      case (dates[0] !== null && dates[1] !== null):
+        setModeratorApplicationFeedDateFromFilter(dateFrom!);
+        setModeratorApplicationFeedDateToFilter(dateTo!);
+        break;
+      case (dates[0] !== null && dates[1] === null):
+        setModeratorApplicationFeedDateFromFilter(dateFrom!);
+        deleteModeratorApplicationFeedDateToFilter();
+        break;
+      case (dates[1] !== null):
+        deleteModeratorApplicationFeedDateFromFilter();
+        setModeratorApplicationFeedDateToFilter(dateTo!);
+        break;
+      default: 
+        deleteModeratorApplicationFeedDateFromFilter();
+        deleteModeratorApplicationFeedDateToFilter();
+        break;
+    }
+  }
+
   useEffect(() => {
     setCurrentPage('Записи пользователей');
+  }, [])
 
-    setApplicationsAll()
+  useEffect(() => {
+    setApplicationsAll(moderatorApplicationFeedStatusFilter,
+      moderatorApplicationFeedDateFromFilter,
+      moderatorApplicationFeedDateToFilter)
       .then(result => {
         if (!result.result) {
           setModalTitle('Ошибка');
@@ -78,7 +119,9 @@ const ModeratorApplicationFeed: React.FC = () => {
         deleteCurrentPage();
       }
 
-  }, [])
+  }, [moderatorApplicationFeedStatusFilter,
+    moderatorApplicationFeedDateFromFilter,
+    moderatorApplicationFeedDateToFilter])
 
   useEffect(() => {
     const filteredApplications = moderatorApplicationFeedUsernameFilter ? applicationsAll.filter((application: Application) => {
@@ -129,14 +172,25 @@ const ModeratorApplicationFeed: React.FC = () => {
             <ApplicationFeedStatusFilterSelector />
           </Col>
           <Col>
-            {/* <InputGroup className="kingdom-page__filter_username">
-              <Form.Control
-                placeholder="Введите имя пользователя"
-                aria-label="Username"
-                value={usernameFilter}
-                onChange={e => setUsernameFilter(e.target.value)}
+            <Row>
+              <Col>
+                <DatePicker className="moderator_applications_feed__date_filter"
+                placeholderText="Выберите диапазон дат"
+                selected={moderatorApplicationFeedDateFromFilter}
+                onChange={handleDateChange}
+                startDate={moderatorApplicationFeedDateFromFilter}
+                endDate={moderatorApplicationFeedDateToFilter}
+                selectsRange
+                dateFormat="dd/MM/yyyy"
+                locale={ru}
               />
-            </InputGroup> */}
+            </Col>
+              <Col>
+                <Button onClick={() => handleDateChange([null, null])}>
+                  Сбросить
+                </Button>
+              </Col>
+            </Row>
           </Col>
         </Row>
         
