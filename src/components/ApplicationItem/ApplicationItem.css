@@ -1,0 +1,16 @@
+
+.applications-feed__application {
+  border: 2px solid black;
+  border-radius: 6px;
+  margin-bottom: 1rem !important;
+  align-items: center;
+  cursor: pointer;
+}
+
+.applications-feed__ruler {
+  padding-left: 2rem !important;
+}
+
+.applications-feed__textcontent {
+  margin-bottom: 1rem !important;
+}

@@ -1,0 +1,35 @@
+.col-form-label {
+  color: var(--text-white);
+}
+
+.form-label {
+  color: var(--text-white);
+}
+
+.me-auto {
+  margin-right: 0!important;
+}
+
+.navbar-collapse {
+  margin: 0;
+  justify-content: end;
+}
+
+.nav-link {
+  /* all: unset; */
+  color: var(--text-white);
+}
+
+.navbar-nav {
+  --bs-nav-link-color: var(--text-white);
+  --bs-nav-link-hover-color: var(--text-white);
+  --bs-nav-link-disabled-color: var(--text-white);
+}
+
+.react-datepicker-wrapper {
+  /* height: 100%; */
+}
+
+.react-datepicker__input-container {
+  /* height: 100%; */
+}
